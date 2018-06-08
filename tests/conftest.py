@@ -28,7 +28,9 @@ def app():
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///{}'.format(db_path),
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-        'SQLALCHEMY_ECHO': False
+        'SQLALCHEMY_ECHO': False,
+        'WTF_CSRF_ENABLED': False, # disable all WTF's CSRF protection
+        # 'TRAP_BAD_REQUEST_ERRORS': True, # avoid 400(Bad Request) when form miss a key
     })
 
     # create the database and load test data

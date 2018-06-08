@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -63,6 +63,14 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    # HTTP error handling
+    # @app.errorhandler(404)
+    # def not_found(error):
+    #     return render_template('404.html'), 404
+    # @app.errorhandler(500)
+    # def internal_error(error):
+    #     return render_template('500.html'), 500
 
     # register db
     from . import db

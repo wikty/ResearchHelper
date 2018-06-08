@@ -1,7 +1,8 @@
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+# from werkzeug.security import generate_password_hash, check_password_hash
 
 from .db import db
+from .auth.models import User, InvitationCode
 
 # CRUD
 # Create
@@ -71,36 +72,36 @@ from .db import db
 # MyModel.query.paginate()
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.Text, nullable=False)
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(50), nullable=False, unique=True)
+#     password = db.Column(db.Text, nullable=False)
 
-    def __init__(self, **kwargs):
-        """Create user and encrypt password."""
-        super(User, self).__init__(**kwargs)
-        self.password = self._encrypt_password(self.password)
+#     def __init__(self, **kwargs):
+#         """Create user and encrypt password."""
+#         super(User, self).__init__(**kwargs)
+#         self.password = self._encrypt_password(self.password)
 
-    def _encrypt_password(self, password):
-        return generate_password_hash(password)
+#     def _encrypt_password(self, password):
+#         return generate_password_hash(password)
 
-    def check_password(self, password):
-        """Check user password."""
-        return check_password_hash(self.password, password)
+#     def check_password(self, password):
+#         """Check user password."""
+#         return check_password_hash(self.password, password)
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+#     def __repr__(self):
+#         return '<User %r>' % self.username
 
 
-class InvitationCode(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, default=-1)
-    code = db.Column(db.String(6), nullable=False, unique=True)
-    refer = db.Column(db.Text, nullable=False, default='')
-    assigned = db.Column(db.Boolean, nullable=False, default=False)
-    created_date = db.Column(db.DateTime, nullable=False,
-        default=datetime.utcnow)
-    assigned_date = db.Column(db.DateTime)
+# class InvitationCode(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, default=-1)
+#     code = db.Column(db.String(6), nullable=False, unique=True)
+#     refer = db.Column(db.Text, nullable=False, default='')
+#     assigned = db.Column(db.Boolean, nullable=False, default=False)
+#     created_date = db.Column(db.DateTime, nullable=False,
+#         default=datetime.utcnow)
+#     assigned_date = db.Column(db.DateTime)
 
 
 class Post(db.Model):

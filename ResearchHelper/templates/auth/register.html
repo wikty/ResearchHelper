@@ -1,19 +1,28 @@
 {% extends 'base.html' %}
 
+{% from "helper/form.html" import render_field %}
+{% from "helper/flash.html" import render_messages %}
+
 {% block header %}
   <h1>{% block title %}Register{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+  <legend>Register</legend>
+  
+  <div>
+    {{ render_messages() }}
+  </div>
+
   <form method="post">
-    <label for="invitation">Invitation Code</label>
-    <input name="invitation" id="invitation" required>
-    <label for="refer">Refer</label>
-    <input name="refer" id="refer">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
+    {{ form.csrf_token }}
+    {{ render_field(form.invitation, placeholder="Invitation Code", autofocus="") }}
+    {{ render_field(form.refer, placeholder="Refer") }}
+    {{ render_field(form.username, placeholder="Username") }}
+    {{ render_field(form.email, placeholder="Email") }}
+    {{ render_field(form.password, placeholder="Password") }}
+    {{ render_field(form.confirm, placeholder="Repeat Password") }}
+    {{ form.submit() }}
   </form>
+
 {% endblock %}

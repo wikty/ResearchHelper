@@ -1,15 +1,31 @@
 {% extends 'base.html' %}
 
+{% from "helper/form.html" import render_field %}
+{% from "helper/flash.html" import render_messages %}
+
 {% block header %}
   <h1>{% block title %}Log In{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+  <legend>Sign in</legend>
+  <div>
+    {{ render_messages() }}
+  </div>
+
+  <form method="POST" role="form" accept-charset="UTF-8">
+    {# hidden fields if exist #}
+    {{ form.hidden_tag() }}
+    {# CSRF Token #}
+    {{ form.csrf_token }}
+    
+    {{ render_field(form.username, placeholder="Username", autofocus="") }}
+    {{ render_field(form.password, placeholder="Password") }}
+    <div>
+      <label>
+        <input type="checkbox" name="remember" value="1"> Remember Me
+      </label>
+    </div>
+    {{ form.submit() }}
   </form>
 {% endblock %}

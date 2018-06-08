@@ -16,11 +16,11 @@ def insert(app, db):
         db.session.add_all([invitation1, invitation2])
 
         # user(id=1)
-        user = User(username='test', password='test')
+        user = User(username='test', password='test', email='test@example.com')
         db.session.add(user)
 
-        user1 = User(username='wikty', password='123#Xyz')
-        user2 = User(username='ytkiw', password='zyX#321')
+        user1 = User(username='foo', password='foo', email='foo@example.com')
+        user2 = User(username='bar', password='bar', email='bar@example.com')
         db.session.add_all([user1, user2])
         
         series1 = Series(name='Tutorial of Machine Learning')

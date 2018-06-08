@@ -360,6 +360,14 @@ Run test cases: `pytest`
 
 Or Run if you have configure have `setup.py` and `setup.cfg`: `python setup.py test`
 
+Run test cases with verbose ouput: `pytest -v`
+
+Run test cases in a directory: `pytest tests`
+
+Run test cases in a module: `pytest tests/test_auth.py`
+
+Run a test case: `pytest tests/test_auth.py::test_register`
+
 ### Test Coverage
 
 You should test as much of your code as possible. Code in functions only runs when the function is called, and code in branches, such as if blocks, only runs when the condition is met. You want to make sure that each function is tested with data that covers each branch.
