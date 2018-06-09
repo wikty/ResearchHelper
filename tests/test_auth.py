@@ -76,8 +76,6 @@ def test_login(client, auth):
 
     # test that successful login redirects to the index page
     response = auth.login()
-    # print(response.data)
-    print(response.headers)
     assert response.headers['Location'] == 'http://localhost/'
 
     # login request set the user_id in the session
@@ -85,7 +83,8 @@ def test_login(client, auth):
     # Note: Using client in a with block allows accessing context variables 
     # such as session after the response is returned.
     with client:
-        client.get('/')
+        response = client.get('/')
+        assert b'Logout' in response.data
         assert session['user_id'] == 1
         assert g.user.username == 'test'
 

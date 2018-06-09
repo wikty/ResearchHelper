@@ -1,5 +1,5 @@
 from ResearchHelper.models import (
-    User, InvitationCode, Post, Category, Tag, Series
+    User, InvitationCode, Post, PostCategory, PostTag, PostSeries
 )
 
 def init(app, db):
@@ -23,14 +23,14 @@ def insert(app, db):
         user2 = User(username='bar', password='bar', email='bar@example.com')
         db.session.add_all([user1, user2])
         
-        series1 = Series(name='Tutorial of Machine Learning')
-        series2 = Series(name='Tutorial of Deep Learning')
+        series1 = PostSeries(name='Tutorial of Machine Learning')
+        series2 = PostSeries(name='Tutorial of Deep Learning')
         db.session.add_all([series1, series2])
 
-        category1 = Category(name='machine learning')
-        category2 = Category(name='deep learning')
-        tag1 = Tag(name='ML')
-        tag2 = Tag(name='DL')
+        category1 = PostCategory(name='machine learning')
+        category2 = PostCategory(name='deep learning')
+        tag1 = PostTag(name='ML')
+        tag2 = PostTag(name='DL')
 
         # post(id=1)
         post = Post(title='test title', body='test body')

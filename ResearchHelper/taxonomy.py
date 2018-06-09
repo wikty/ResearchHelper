@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 
 from .auth import login_required
 from .db import db
-from .models import Category
+from .models import PostCategory as Category
 
 # don't specify url prefix
 bp = Blueprint('taxonomy', __name__, url_prefix='/taxonomy')

@@ -7,8 +7,8 @@ from ResearchHelper.models import Post
 
 def test_index(client, auth):
     response = client.get('/')
-    assert b"Log In" in response.data
-    assert b"Register" in response.data
+    assert b"Sign in" in response.data
+    assert b"Sign up" in response.data
     # user cannot update before login
     assert b'href="/1/update"' not in response.data
 

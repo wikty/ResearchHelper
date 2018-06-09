@@ -8,9 +8,10 @@ from flask import (
 from . import db
 from .forms import LoginForm, RegisterForm
 from .models import User
+from .config import mod_name
 
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint(mod_name, __name__, url_prefix='/auth')
 
 
 # require authentication decorator

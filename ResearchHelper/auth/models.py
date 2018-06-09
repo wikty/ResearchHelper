@@ -1,22 +1,12 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from . import db
+from . import db, TimestampModelMixin
+from .config import mod_name
 
 
-class Base(db.Model):
-
-    __abstract__  = True
-
-    id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime, 
-        default=db.func.current_timestamp())
-    modified = db.Column(db.DateTime, 
-        default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp())
-
-
-class User(Base):
+class User(db.Model, TimestampModelMixin):
+    __tableprefix__ = mod_name
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
@@ -39,7 +29,8 @@ class User(Base):
         return '<User %r>' % self.username
 
 
-class InvitationCode(Base):
+class InvitationCode(db.Model, TimestampModelMixin):
+    __tableprefix__ = mod_name
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, default=-1)
     code = db.Column(db.String(6), nullable=False, unique=True)

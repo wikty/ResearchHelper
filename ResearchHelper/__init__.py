@@ -36,7 +36,7 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI='sqlite:///{}'.format(
             os.path.join(app.instance_path, 'db.sqlite3')),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_ECHO=False,
+        SQLALCHEMY_ECHO=True,
         SQLALCHEMY_BINDS={
             'users': 'sqlite:///{}'.format(
                 os.path.join(app.instance_path, 'users.sqlite3')),

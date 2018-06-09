@@ -5,7 +5,8 @@ from werkzeug.exceptions import abort
 
 from .auth import login_required
 from .db import db
-from .models import Post, Category
+from .models import Post
+from .models import PostCategory as Category
 
 # HTTP response code
 # abort() will raise a special exception that returns an HTTP status code. 

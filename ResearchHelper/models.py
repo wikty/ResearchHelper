@@ -1,8 +1,9 @@
 from datetime import datetime
 # from werkzeug.security import generate_password_hash, check_password_hash
 
-from .db import db
+from .db import db, TimestampModelMixin
 from .auth.models import User, InvitationCode
+
 
 # CRUD
 # Create
@@ -71,40 +72,45 @@ from .auth.models import User, InvitationCode
 # Pagination
 # MyModel.query.paginate()
 
-
-# class User(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(50), nullable=False, unique=True)
-#     password = db.Column(db.Text, nullable=False)
-
-#     def __init__(self, **kwargs):
-#         """Create user and encrypt password."""
-#         super(User, self).__init__(**kwargs)
-#         self.password = self._encrypt_password(self.password)
-
-#     def _encrypt_password(self, password):
-#         return generate_password_hash(password)
-
-#     def check_password(self, password):
-#         """Check user password."""
-#         return check_password_hash(self.password, password)
-
-#     def __repr__(self):
-#         return '<User %r>' % self.username
+mod_name = 'blog'
 
 
-# class InvitationCode(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, default=-1)
-#     code = db.Column(db.String(6), nullable=False, unique=True)
-#     refer = db.Column(db.Text, nullable=False, default='')
-#     assigned = db.Column(db.Boolean, nullable=False, default=False)
-#     created_date = db.Column(db.DateTime, nullable=False,
-#         default=datetime.utcnow)
-#     assigned_date = db.Column(db.DateTime)
+class PostCategory(db.Model, TimestampModelMixin):
+    # __tablename__ = "post_category"
+    __tableprefix__ = mod_name
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, nullable=False,
+        default=-1)
+    name = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return '<PostCategory %r>' % self.name
 
 
-class Post(db.Model):
+class PostTag(db.Model, TimestampModelMixin):
+    # __tablename__ = "post_tag"
+    __tableprefix__ = mod_name
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return '<PostTag %r>' % self.name
+
+
+class PostSeries(db.Model, TimestampModelMixin):
+    # __tablename__ = "post_series"
+    __tableprefix__ = mod_name
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    brief = db.Column(db.Text, nullable=False, default='')
+
+    def __repr__(self):
+        return '<PostSeries %r>' % self.name
+
+
+class Post(db.Model, TimestampModelMixin):
+    # __tablename__ = 'post'
+    __tableprefix__ = mod_name
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
     body = db.Column(db.Text, nullable=False)
@@ -115,60 +121,38 @@ class Post(db.Model):
     series_id = db.Column(db.Integer, nullable=False,
         default=-1)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id),
         nullable=False)
-    user = db.relationship('User', lazy='joined',
+    user = db.relationship(User, 
+        lazy='joined',
         backref=db.backref('posts', lazy=True))
 
-    categories = db.relationship('Category', secondary='post_category_link',
-        lazy='subquery', backref=db.backref('posts', lazy=True))
+    categories = db.relationship(PostCategory, 
+        lazy='subquery',
+        secondary='{}_post_category_link'.format(mod_name), 
+        backref=db.backref('posts', lazy=True))
 
-    tags = db.relationship('Tag', secondary='post_tag_link', lazy='subquery',
+    tags = db.relationship(PostTag, 
+        lazy='subquery',
+        secondary='{}_post_tag_link'.format(mod_name), 
         backref=db.backref('posts', lazy=True))
 
     def __repr__(self):
         return '<Post %r>' % self.title
 
 
-class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    parent_id = db.Column(db.Integer, nullable=False,
-        default=-1)
-    name = db.Column(db.String(50), nullable=False)
-
-    def __repr__(self):
-        return '<Category %r>' % self.name
-
-
-class Tag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-
-    def __repr__(self):
-        return '<Tag %r>' % self.name
-
-
-class Series(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    brief = db.Column(db.Text, nullable=False, default='')
-
-    def __repr__(self):
-        return '<Series %r>' % self.name
-
-
-post_tag_link = db.Table('post_tag_link',
+post_tag_link = db.Table('{}_post_tag_link'.format(mod_name),
     db.Column('tag_id', db.Integer, 
-        db.ForeignKey('tag.id'), primary_key=True),
+        db.ForeignKey(PostTag.id), primary_key=True),
     db.Column('post_id', db.Integer, 
-        db.ForeignKey('post.id'), primary_key=True)
+        db.ForeignKey(Post.id), primary_key=True)
 )
 
-post_category_link = db.Table('post_category_link',
+post_category_link = db.Table('{}_post_category_link'.format(mod_name),
     db.Column('category_id', db.Integer, 
-        db.ForeignKey('category.id'), primary_key=True),
+        db.ForeignKey(PostCategory.id), primary_key=True),
     db.Column('post_id', db.Integer, 
-        db.ForeignKey('post.id'), primary_key=True)    
+        db.ForeignKey(Post.id), primary_key=True)    
 )
 
 

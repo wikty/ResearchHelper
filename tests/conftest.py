@@ -8,7 +8,7 @@ from flask import appcontext_pushed, g
 from ResearchHelper import create_app
 from ResearchHelper.db import db
 from ResearchHelper.models import (
-    User, InvitationCode, Post, Category, Tag, Series
+    User, InvitationCode, Post, PostCategory, PostTag, PostSeries
 )
 
 import data
