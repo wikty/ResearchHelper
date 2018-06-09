@@ -7,34 +7,50 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        {% if url_for('home') == request.url %}
+        {% if url_for('index') == request.url %}
         <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+          <a class="nav-link" href="{{ url_for('index') }}">Home</a>
         </li>
         {% endif %}
 
-        {% if url_for('signin') == request.url %}
+        {% if g.user %}
+        
+        {#
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.user', user_id=g.user.id) }}">g.user.username</a>
+        </li>
+        #}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+        </li>
+
+        {% else %}
+
+        {% if url_for('auth.login') == request.url %}
         <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for('signin') }}">SignIn <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="{{ url_for('auth.login') }}">Sign in <span class="sr-only">(current)</span></a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('signin') }}">SignIn</a>
+          <a class="nav-link" href="{{ url_for('auth.login') }}">Sign in</a>
         </li>
         {% endif %}
 
-        {% if url_for('signup') == request.url %}
+        {% if url_for('auth.register') == request.url %}
         <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for('signup') }}">SignUp <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="{{ url_for('auth.register') }}">Sign up <span class="sr-only">(current)</span></a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('signup') }}">SignUp</a>
+          <a class="nav-link" href="{{ url_for('auth.register') }}">Sign up</a>
         </li>
+        {% endif %}
+
         {% endif %}
         <!-- <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,10 +67,14 @@
           <a class="nav-link disabled" href="#">Disabled</a>
         </li> -->
       </ul>
+      
+      {#
       <form class="form-inline my-2 my-lg-0" action="{{ url_for('search') }}" method="get">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
+      #}
+      
     </div>
   </nav>
 </header>

@@ -1,14 +1,59 @@
-{% macro render_field(field, placeholder=None) %}
-  <dt>{{ field.label }}
-  <dd>
-  {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
-  {{ field(class=css_class, placeholder=placeholder, **kwargs)|safe }}
-  {% if field.errors %}
-    <ul class=errors>
-    {% for error in field.errors %}
-      <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  </dd>
+{% macro render_field(field, 
+  placeholder=None, 
+  helptext=None, 
+  checkbox=False,
+  group_class=None) 
+%}
+  
+{% if checkbox %}
+
+  <div class="form-group form-check {{ group_class }}">
+    {% set css_class = 'form-check-input ' + kwargs.pop('class', '') %}
+    {% if field.errors %}
+    {% set css_class = css_class + ' is-invalid' %}
+    {% else %}
+    {% set css_class = css_class + ' is-valid' %}
+    {% endif %}
+    
+    {{ field(class=css_class, **kwargs)|safe }}
+    
+    <label class="form-check-label" for="{{ field.label.field_id }}">{{ field.label.text }}</label>
+
+    {% if field.errors %}
+    <div class="invalid-feedback">
+      {% for error in field.errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  
+{% else %}
+  
+  <div class="form-group {{ group_class }}">
+    {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+    {% if field.errors %}
+    {% set css_class = css_class + ' is-invalid' %}
+    {% else %}
+    {% set css_class = css_class + ' is-valid' %}
+    {% endif %}
+    
+    {{ field.label }}
+    
+    {{ field(class=css_class, placeholder=placeholder, **kwargs)|safe }}
+    
+    {% if helptext %}
+    <small id="{{ field.id }}-help" class="form-text text-muted">{{ helptext }}</small>
+    {% endif %}
+
+    {% if field.errors %}
+    <div class="invalid-feedback">
+      {% for error in field.errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+{% endif %}
 {% endmacro %}

@@ -1,28 +1,61 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% from "helper/form.html" import render_field %}
-{% from "helper/flash.html" import render_messages %}
 
-{% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
-{% endblock %}
+{% block title %}Sign Up{% endblock %}
 
 {% block content %}
-  <legend>Register</legend>
-  
-  <div>
-    {{ render_messages() }}
-  </div>
-
-  <form method="post">
+<form class="needs-validation p-3 w-75 mw-100 mx-auto" method="post" novalidate>
+    <!-- Brand Image -->
+    <!-- <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+    <h1 class="h3 mb-3 font-weight-normal">Please Sign up</h1>
+    {# form.hidden_tag() include csrf and other hidden tags #}
     {{ form.csrf_token }}
-    {{ render_field(form.invitation, placeholder="Invitation Code", autofocus="") }}
-    {{ render_field(form.refer, placeholder="Refer") }}
-    {{ render_field(form.username, placeholder="Username") }}
-    {{ render_field(form.email, placeholder="Email") }}
-    {{ render_field(form.password, placeholder="Password") }}
-    {{ render_field(form.confirm, placeholder="Repeat Password") }}
-    {{ form.submit() }}
-  </form>
 
+    <div class="form-row">
+    {{ render_field(
+        form.invitation, 
+        placeholder="Invitation Code", 
+        helptext="Please contact admin to get a invitation code.",
+        autofocus="",
+        group_class="col-md-6")
+    }}
+    {{ render_field(
+        form.refer, 
+        helptext="Who recommended you to us?",
+        placeholder="Refer",
+        group_class="col-md-6") 
+    }}
+    </div>
+
+    <div class="form-row">
+    {{ render_field(
+        form.username, 
+        placeholder="Username",
+        group_class="col-md-6")
+    }}
+    {{ render_field(
+        form.email, 
+        placeholder="Email",
+        helptext="We'll never share your email with anyone else.",
+        group_class="col-md-6") 
+    }}
+    </div>
+
+    <div class="form-row">
+    {{ render_field(
+        form.password, 
+        placeholder="Password",
+        group_class="col-md-6") 
+    }}
+    {{ render_field(
+        form.confirm, 
+        placeholder="Re-enter Password",
+        helptext="Please re-enter the password.",
+        group_class="col-md-6")
+    }}
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+</form>
 {% endblock %}
