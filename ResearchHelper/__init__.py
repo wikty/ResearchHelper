@@ -64,13 +64,23 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
+    # HTTP response code
+    # abort() will raise a special exception that returns an HTTP status code. 
+    # It takes an optional message to show with the error, otherwise a default 
+    # message is used. 
+    # 404 means "Not Found"
+    # 403 means "Forbidden"
+    # 401 means "Unauthorized", you can redirect to the login page instead of 
+    # returning this status.
+    
     # HTTP error handling
-    # @app.errorhandler(404)
-    # def not_found(error):
-    #     return render_template('404.html'), 404
-    # @app.errorhandler(500)
-    # def internal_error(error):
-    #     return render_template('500.html'), 500
+    @app.errorhandler(404)
+    def not_found(error):
+        return render_template('404.html'), 404
+    
+    @app.errorhandler(500)
+    def internal_error(error):
+        return render_template('500.html'), 500
 
     # register db
     from . import db
