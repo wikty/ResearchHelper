@@ -13,7 +13,7 @@
     <p class="card-text">{{ post.body|striptags|truncate(100) }}</p>
     {% endif %}
 
-    <p class="card-text"><small class="text-muted">by {{ post.user.username }} on {{ post.pub_date.strftime('%Y-%m-%d') }}</small></p>
+    <p class="card-text"><small class="text-muted">by {{ post.user.username }} on {{ post.created.strftime('%Y-%m-%d') }}</small></p>
 
     {% if g.user.id == post.user.id %}
     <a class="card-link" href="{{ url_for('blog.update', id=post.id) }}">Edit</a>

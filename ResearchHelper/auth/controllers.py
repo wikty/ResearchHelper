@@ -6,26 +6,13 @@ from flask import (
 
 
 from . import db
+from . import login_required
 from .forms import LoginForm, RegisterForm
 from .models import User
 from .config import mod_name
 
 
 bp = Blueprint(mod_name, __name__, url_prefix='/auth')
-
-
-# require authentication decorator
-def login_required(view):
-    """View decorator that redirects anonymous users to the login page."""
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            # redirect to auth blueprint's login()
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view
 
 
 # registers a function to load user before view running
