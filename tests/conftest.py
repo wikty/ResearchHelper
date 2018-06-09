@@ -1,7 +1,10 @@
 import os
 import tempfile
+from contextlib import contextmanager
 
 import pytest
+from flask import appcontext_pushed, g
+
 from ResearchHelper import create_app
 from ResearchHelper.db import db
 from ResearchHelper.models import (
@@ -45,8 +48,28 @@ def app():
 
 
 @pytest.fixture
+def app_context(app):
+    """Use as a with block to push the context, which will make `current_app` point at
+    this application.
+    In the view function or cli command function, a application context is automatically
+    pushed. But in the test enviroment you should create it for yourself and use it in
+    a with block.
+    Note: due to db depends on app context, all db operations should inside a context.  
+    """
+    def new_context():
+        return app.app_context()
+    return new_context
+
+
+@pytest.fixture
 def client(app):
-    """A test client for the app."""
+    """A test client agent for the app.
+    Client has get(), post() and so on to make a http request.
+    Besides, using client in a with block allows accessing context variables
+    such as session after the response is returned. In other words, even the
+    request has been done, the context variables(`request`, `session`) will 
+    still be keep in the with block. 
+    """
     return app.test_client()
 
 
@@ -54,6 +77,22 @@ def client(app):
 def runner(app):
     """A test runner for the app's Click commands."""
     return app.test_cli_runner()
+
+
+@contextmanager
+def user_set(app, user):
+    def handler(sender, **kwargs):
+        g.user = user
+    with appcontext_pushed.connected_to(handler, app):
+        yield
+
+
+@pytest.fixture
+def hook_user(app):
+    """Override the `g.user` in with context block."""
+    def inner(user):
+        return user_set(app, user)
+    return inner
 
 
 class AuthActions(object):

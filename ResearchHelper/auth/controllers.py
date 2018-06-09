@@ -31,7 +31,7 @@ def login_required(view):
 @bp.before_app_request
 def load_logged_in_user():
     """If a user id is stored in the session, load the user object from
-    the database into ``g.user``."""
+    the database into `g.user`."""
     user_id = session.get('user_id', None)
     if user_id is None:
         g.user = None
@@ -40,7 +40,7 @@ def load_logged_in_user():
 
 
 # login view
-@bp.route('/login/', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():

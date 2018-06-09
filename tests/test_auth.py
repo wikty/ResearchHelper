@@ -4,7 +4,7 @@ from ResearchHelper.db import db
 from ResearchHelper.models import User, InvitationCode
 
 
-def test_register(client, app):
+def test_register(client, app_context):
     # test that viewing the page renders without template errors
     assert client.get('/auth/register').status_code == 200
 
@@ -12,7 +12,7 @@ def test_register(client, app):
     password = 'a'
     invitation_code = 'testxx'
     # test that successful registration redirects to the login page
-    with app.app_context():
+    with app_context():
         invitation = InvitationCode(code=invitation_code)
         db.session.add(invitation)
         db.session.commit()
@@ -26,14 +26,12 @@ def test_register(client, app):
               'refer': 'refer'
         }
     )
-    
-    print(response.data)
 
     assert 'http://localhost/auth/login' == response.headers['Location']
 
     # test that the user was inserted into the database
     # and test that invitation code is allocated
-    with app.app_context():
+    with app_context():
         assert User.query.filter_by(
             username=username
         ).first() is not None
@@ -78,6 +76,8 @@ def test_login(client, auth):
 
     # test that successful login redirects to the index page
     response = auth.login()
+    # print(response.data)
+    print(response.headers)
     assert response.headers['Location'] == 'http://localhost/'
 
     # login request set the user_id in the session
@@ -88,6 +88,15 @@ def test_login(client, auth):
         client.get('/')
         assert session['user_id'] == 1
         assert g.user.username == 'test'
+
+
+# def test_hook_user(app, client, auth, hook_user):
+#     with app.app_context():
+#         user = User.query.filter_by(username='test').first()
+#         with hook_user(user):
+#             with client:
+#                 client.get('/')
+#                 assert g.user.username == 'test'
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
