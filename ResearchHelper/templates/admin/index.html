@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+<div class="contianer mt-3">
+  <div class="row">
+    <div class="col-md-8 col-12 mx-auto">
+      <h1>Model List</h1>
+      <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
+          <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Count</th>
+              <th scope="col">New</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for model in model_list %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td><a href="{{ model['url'] }}">{{ model['name'] }}</a></td>
+                <td><a href="{{ model['url'] }}">{{ model['count'] }}</a></td>
+                <td><a href="{{ model['url'] }}?page=create">New</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

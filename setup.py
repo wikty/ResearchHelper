@@ -21,7 +21,8 @@ setup(
         'flask',
         'sqlalchemy',
         'flask-sqlalchemy',
-        'flask-wtf'
+        'flask-wtf',
+        'wtforms-alchemy'
     ],
     extras_require={
         'test': [

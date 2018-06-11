@@ -2,7 +2,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, TimestampModelMixin
-from .config import mod_name
+from .config import mod_name, admin_role
 
 
 class User(db.Model, TimestampModelMixin):
@@ -11,6 +11,7 @@ class User(db.Model, TimestampModelMixin):
     username = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
+    role = db.Column(db.SmallInteger, nullable=False, default=0)
     status = db.Column(db.SmallInteger, nullable=False, default=0)
 
     def __init__(self, **kwargs):
@@ -24,6 +25,9 @@ class User(db.Model, TimestampModelMixin):
     def check_password(self, password):
         """Check user password."""
         return check_password_hash(self.password, password)
+
+    def is_admin(self):
+        return self.role == admin_role
 
     def __repr__(self):
         return '<User %r>' % self.username

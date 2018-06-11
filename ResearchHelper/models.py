@@ -3,6 +3,15 @@ from .auth.models import User, InvitationCode
 from .blog.models import Post, PostCategory, PostTag, PostSeries
 
 
+admin_models = [
+    User,
+    InvitationCode,
+    Post,
+    PostSeries,
+    PostTag,
+    PostCategory
+]
+
 # CRUD
 # Create
 # Inserting data into the database is a three step process:

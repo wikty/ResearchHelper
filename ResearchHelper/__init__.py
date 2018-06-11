@@ -36,7 +36,7 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI='sqlite:///{}'.format(
             os.path.join(app.instance_path, 'db.sqlite3')),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_ECHO=True,
+        SQLALCHEMY_ECHO=False,
         SQLALCHEMY_BINDS={
             'users': 'sqlite:///{}'.format(
                 os.path.join(app.instance_path, 'users.sqlite3')),
@@ -98,5 +98,8 @@ def create_app(test_config=None):
     # register taxonomy
     from . import taxonomy
     app.register_blueprint(taxonomy.bp)
+    # register admin
+    from . import admin
+    app.register_blueprint(admin.bp)
 
     return app

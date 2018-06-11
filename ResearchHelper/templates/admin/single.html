@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% from "helper/form.html" import render_field %}
+
+{% block title %}Admin Model{% endblock %}
+
+{% block content %}
+<div class="contianer my-3">
+  <div class="row">
+  	<div class="col-md-8 col-12 mx-auto">
+  		<form class="needs-validation" method="post" action="{{action}}" novalidate>
+  			{{ form.csrf_token }}
+  			
+        {% for field in form %}
+        	{% if action %}		
+  				
+          {{ render_field(field) }}
+  				
+          {% else %}
+
+  				{{ render_field(field, disabled="disabled") }}
+  				
+          {% endif %}
+        {% endfor %}
+
+        {% if action %}
+  			<button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+        {% endif %}
+  		</form>
+  		{% if action and obj_id %}
+  		<hr>
+  		<form action="{{ url }}{{ obj_id }}/delete" method="post">
+			<button class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure delete it?');">Delete</button>
+		</form>
+  		{% endif %}
+  	</div>
+  </div>
+</div>
+{% endblock %}

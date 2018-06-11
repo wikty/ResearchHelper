@@ -1,5 +1,3 @@
-import re
-
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr, \
     has_inherited_table, declarative_base
@@ -13,20 +11,8 @@ from flask_sqlalchemy.model import Model, DefaultMeta, NameMetaMixin, \
     BindMetaMixin, DeclarativeMeta, should_set_tablename
 
 
-# Improve the Flask-SQLAlchemy automatcially generate table name mechanism.
-camelcase_re = re.compile(r'([A-Z]+)(?=([a-z0-9]|$))')
+from .utils import camel_to_snake_case
 
-
-def camel_to_snake_case(name):
-    def _join(match):
-        word = match.group()
-
-        if len(word) > 1 and match.end() < len(name):
-            return ('_%s_%s' % (word[:-1], word[-1])).lower()
-
-        return '_' + word.lower()
-
-    return camelcase_re.sub(_join, name).lstrip('_')
 
 # Override table automatically generate class
 class NameWithPrefixMetaMixin(NameMetaMixin):
