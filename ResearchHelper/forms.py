@@ -31,5 +31,7 @@ def form_factory(model, **meta_kwargs):
     """
     classname = '{}Form'.format(model.__name__)
     meta_kwargs['model'] = model
+    if hasattr(model, 'form_meta_kwargs'):
+        meta_kwargs.update(model.form_meta_kwargs())
     metaclass = type('Meta', (object, ), meta_kwargs)
     return type(classname, (ModelForm, ), {'Meta': metaclass})
