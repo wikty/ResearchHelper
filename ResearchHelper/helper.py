@@ -7,7 +7,7 @@ from flask.views import MethodView
 from werkzeug.exceptions import abort
 
 from .db import db
-from .config import admin_role, default_list_template, default_single_template
+from .config import default_list_template, default_single_template
 from .forms import form_factory
 
 
@@ -32,7 +32,7 @@ def admin_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
-        if g.user.role == admin_role:
+        if g.user.is_admin():
             return view(**kwargs)
 
         return redirect(url_for('index'))
