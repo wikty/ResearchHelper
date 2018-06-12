@@ -13,17 +13,17 @@
 			  {% for filter in filters %}
 			  {% set filter_name = filter.replace('_', ' ')|title %}
 			  {% if filter == current_filter %}
-			  <a href="{{ url }}?filter={{ filter }}" class="btn btn-secondary disabled" tabindex="-1" role="button" aria-disabled="true">{{ filter_name }}</a>
+			  <a href="{{ url }}?filter={{ filter }}" class="btn btn-dark disabled" tabindex="-1" role="button" aria-disabled="true">{{ filter_name }}</a>
 			  {% else %}
-			  <a href="{{ url }}?filter={{ filter }}" class="btn btn-primary" tabindex="-1" role="button">{{ filter_name }}</a>
+			  <a href="{{ url }}?filter={{ filter }}" class="btn btn-light" tabindex="-1" role="button">{{ filter_name }}</a>
 			  {% endif %}
 			  {% endfor %}
 			{% endif %}
 
 			{% if current_filter %}
-			  <a href="{{ url }}" class="btn btn-primary" tabindex="-1" role="button">Show All</a>
+			  <a href="{{ url }}" class="btn btn-light" tabindex="-1" role="button">Show All</a>
 			{% endif %}
-        <a href="{{ url }}?page=create" class="btn btn-success" tabindex="-1" role="button">New</a>
+        <a href="{{ url }}?page=create" class="btn btn-primary" tabindex="-1" role="button">New</a>
 			</div>
 
   		<table class="table table-striped">
