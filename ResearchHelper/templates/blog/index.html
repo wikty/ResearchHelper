@@ -5,13 +5,16 @@
 {% block content %}
 <div class="container">
   {% include "partial/jumbotron.html" %}
-
-  {% if g.user %}
-    <div><a class="action" href="{{ url_for('blog.create') }}">New</a></div>
-  {% endif %}
 </div>
 
 <div class="container">
+  <div class="row justify-content-end">
+    <div class="col-4">
+    {% if g.user %}
+      <a class="btn btn-primary" href="{{ url_for('blog.create') }}">New</a>
+    {% endif %}
+    </div>
+  </div>
   <div class="row">
   {% for post in posts %}
     <div class="col-md-4">

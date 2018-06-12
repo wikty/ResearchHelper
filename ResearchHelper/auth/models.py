@@ -54,6 +54,6 @@ class InvitationCode(db.Model, TimestampModelMixin):
     __tableprefix__ = mod_name
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, default=-1)
-    code = db.Column(db.String(6), nullable=False, unique=True)
+    code = db.Column(db.String(32), nullable=False, unique=True)
     refer = db.Column(db.Text, nullable=False, default='')
     assigned = db.Column(db.Boolean, nullable=False, default=False)

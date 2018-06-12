@@ -69,14 +69,14 @@ def renew_db_command(bind=None):
 generate_cli = AppGroup('invitation')
 
 
-def generate_invitation(count):
+def generate_invitation(count, length=32):
     for i in range(count):
-        uid = id_generator()
+        uid = id_generator(length)
         while True:
             code = InvitationCode.query.filter_by(code=uid).first()
             if code is None:
                 break
-            uid = id_generator()
+            uid = id_generator(length)
         code = InvitationCode(code=uid)
         db.session.add(code)
         db.session.commit()
@@ -88,10 +88,11 @@ def get_invitation(count):
 
 @generate_cli.command('generate')
 @click.option('--count', default=100, help='The number of invitation code')
+@click.option('--length', default=32, help='The length of invitation code')
 @with_appcontext
-def generate_invitation_command(count):
-    generate_invitation(count)
-    click.echo('{} invitation codes are generated.'.format(count))
+def generate_invitation_command(count, length):
+    generate_invitation(count, length)
+    click.echo('{}[{}] invitation codes are generated.'.format(count, length))
 
 
 @generate_cli.command('get')

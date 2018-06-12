@@ -75,9 +75,10 @@ def test_generate_invitation_command(runner, monkeypatch):
         called = False
         count = None
 
-    def fake_generate_invitation(count):
+    def fake_generate_invitation(count, length):
         Recorder.called = True
         Recorder.count = count
+        Recorder.length = length
 
     monkeypatch.setattr(cli, 'generate_invitation', 
         fake_generate_invitation
@@ -87,12 +88,15 @@ def test_generate_invitation_command(runner, monkeypatch):
     assert 'generated' in result.output
     assert Recorder.called
     assert Recorder.count == 100
+    assert Recorder.length == 32
 
     Recorder.called = False
-    result = runner.invoke(args=['invitation', 'generate', '--count', 10])
+    result = runner.invoke(args=[
+        'invitation', 'generate', '--count', 10, '--length', 16])
     assert 'generated' in result.output
     assert Recorder.called
     assert Recorder.count == 10
+    assert Recorder.length == 16
 
 
 def test_get_invitation_command(runner, monkeypatch):
