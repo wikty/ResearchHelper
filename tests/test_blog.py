@@ -48,19 +48,19 @@ def test_exists_required(client, auth, path):
     assert client.post(path).status_code == 404
 
 
-def test_create(client, auth, app):
+def test_create(client, auth, app_context):
     auth.login()
     assert client.get('/create').status_code == 200
 
-    with app.app_context(), client:
-        client.post('/create', data={'title': 'created', 'body': ''})
+    with app_context(), client:
+        response = client.post('/create', data={'title': 'created', 'body': 'create'})
         assert len(Post.query.filter_by(user_id=session['user_id']).all()) > 1
 
 
 def test_update(client, auth, app):
     auth.login()
     assert client.get('/1/update').status_code == 200
-    client.post('/1/update', data={'title': 'updated', 'body': ''})
+    client.post('/1/update', data={'title': 'updated', 'body': 'update'})
 
     with app.app_context():
         post = Post.query.get(1)
@@ -74,7 +74,8 @@ def test_update(client, auth, app):
 def test_create_update_validate(client, auth, path):
     auth.login()
     response = client.post(path, data={'title': '', 'body': ''})
-    assert b'Title is required.' in response.data
+    print(response.data)
+    assert b'title is required.' in response.data
 
 
 def test_delete(client, auth, app):

@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Flask, Blueprint, flash, g, redirect, render_template, request, url_for
+    Flask, Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
 from flask.views import MethodView
 from werkzeug.exceptions import abort
@@ -245,3 +245,11 @@ model_filters = {
     'sorted_by_created': lambda model: model.query.order_by(model.created).all(),
     'sorted_by_modified': lambda model: model.query.order_by(model.modified).all()
 }
+
+
+def response_json(message='ok', status=0, **data):
+    return jsonify({
+        'data': data,
+        'status': status,
+        'message': message
+    })

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>{{  post.title|title }}</h1>
+  
+  {% if post.series %}
+  <h2>Series</h2>
+  <p><a href="#" data-toggle="tooltip" data-placement="right" title="{{ post.series.brief }}">{{ post.series.name }}</a></p>
+  {% endif %}
+
+  <h2>Categories</h2>
+  <ul>
+    {% for category in post.categories %}
+    <li>{{ category.name }}</li>
+    {% endfor %}
+  </ul>
+  
+  <h2>Tags</h2>
+  <ul>
+    {% for tag in post.tag %}
+    <li>{{ tag.name }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Content</h2>
+  <div>{{ post.body }}</div>
+</div>
+{% endblock %}

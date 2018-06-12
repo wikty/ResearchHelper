@@ -1,0 +1,21 @@
+{% macro ajax(
+  url, 
+  target, 
+  event,
+  data,
+  method,
+  callback="function(result){}") 
+%}
+<script type=text/javascript>
+  $(function() {
+    $("{{ target }}").on("{{ event }}", function(ev) {
+      ev.preventDefault();
+      $.ajax({
+        method: "{{ method }}",
+        url: "{{ url|tojson }}",
+        data: {{ data|tojson }}
+      }).done({{ callback }});
+    });
+  });
+</script>
+{% endmacro %}

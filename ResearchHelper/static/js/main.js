@@ -16,6 +16,9 @@ $(function() {
           }, false);
         });
       }, false);
+
+      // enable tooltip
+      $('[data-toggle="tooltip"]').tooltip();
     // var progressBarModal = $('#progress-bar-modal');
     // var progressBar = $('#progress-bar');
 

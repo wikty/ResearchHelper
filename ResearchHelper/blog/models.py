@@ -13,6 +13,14 @@ class PostCategory(db.Model, TimestampModelMixin):
     def __repr__(self):
         return '<PostCategory %r>' % self.name
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'parent_id': self.parent_id,
+            'name': self.name
+        }
+
 
 class PostTag(db.Model, TimestampModelMixin):
     # __tablename__ = "post_tag"
@@ -22,6 +30,13 @@ class PostTag(db.Model, TimestampModelMixin):
 
     def __repr__(self):
         return '<PostTag %r>' % self.name
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
 
 class PostSeries(db.Model, TimestampModelMixin):
@@ -34,6 +49,14 @@ class PostSeries(db.Model, TimestampModelMixin):
     def __repr__(self):
         return '<PostSeries %r>' % self.name
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'brief': self.brief
+        }
+    
 
 class Post(db.Model, TimestampModelMixin):
     # __tablename__ = 'post'
@@ -62,6 +85,25 @@ class Post(db.Model, TimestampModelMixin):
 
     def __repr__(self):
         return '<Post %r>' % self.title
+
+    @property
+    def serialize(self):
+        """Model return as a serialize dict"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'body': self.body,
+            'series_id': self.series_id,
+            'user': self.user.serialize,
+            'categories': [category.serialize for category in self.categories],
+            'tags': [tag.serialize for tag in self.tags]
+        }
+
+    @classmethod
+    def form_meta_kwargs(cls):
+        return {
+            'include': ('user_id', )
+        }
 
 
 post_tag_link = db.Table('{}_post_tag_link'.format(mod_name),

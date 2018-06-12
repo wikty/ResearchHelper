@@ -8,15 +8,15 @@
 </div>
 
 <div class="container">
-  <div class="row justify-content-end">
+  <div class="row justify-content-end mb-2">
     <div class="col-4">
     {% if g.user %}
-      <a class="btn btn-primary" href="{{ url_for('blog.create') }}">New</a>
+      <a class="btn btn-primary" href="{{ url_for('.create') }}">New</a>
     {% endif %}
     </div>
   </div>
   <div class="row">
-  {% for post in posts %}
+  {% for post in post_list %}
     <div class="col-md-4">
       {% include "blog/summary.html" %}
     </div>

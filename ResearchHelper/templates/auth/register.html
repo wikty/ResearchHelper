@@ -16,13 +16,13 @@
     {{ render_field(
         form.invitation, 
         placeholder="Invitation Code", 
-        helptext="Please contact admin to get a invitation code.",
+        help="Please contact admin to get a invitation code.",
         autofocus="",
         group_class="col-md-6")
     }}
     {{ render_field(
         form.refer, 
-        helptext="Who recommended you to us?",
+        help="Who recommended you to us?",
         placeholder="Refer",
         group_class="col-md-6") 
     }}
@@ -37,7 +37,7 @@
     {{ render_field(
         form.email, 
         placeholder="Email",
-        helptext="We'll never share your email with anyone else.",
+        help="We'll never share your email with anyone else.",
         group_class="col-md-6") 
     }}
     </div>
@@ -51,7 +51,7 @@
     {{ render_field(
         form.confirm, 
         placeholder="Re-enter Password",
-        helptext="Please re-enter the password.",
+        help="Please re-enter the password.",
         group_class="col-md-6")
     }}
     </div>

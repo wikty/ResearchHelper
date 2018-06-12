@@ -42,7 +42,8 @@ def create_app(test_config=None):
                 os.path.join(app.instance_path, 'users.sqlite3')),
             'appmeta': 'sqlite:///{}'.format(
                 os.path.join(app.instance_path, 'appmeta.sqlite3')),
-        }
+        },
+        JSON_AS_ASCII=False
     )
     # Overrides the default configuration, i.e., production mode
     if test_config is None:

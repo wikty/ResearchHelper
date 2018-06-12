@@ -21,6 +21,14 @@ class User(db.Model, TimestampModelMixin):
         """Create user and encrypt password."""
         super(User, self).__init__(**kwargs)
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'username': self.username
+        }
+
     @classmethod
     def form_meta_kwargs(cls):
         return {

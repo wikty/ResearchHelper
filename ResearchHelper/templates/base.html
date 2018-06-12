@@ -10,6 +10,12 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
+    {# Flask(Jinjia)'ll set the prefix to the root of the application, so
+      you can refer `$SCRIPT_ROOT` in your javascript code.#}
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
     <title>{% block title %}{% endblock %} - Research Helper</title>
     {% block static %}{% endblock %}
   </head>

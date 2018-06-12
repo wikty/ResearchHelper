@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% from "helper/form.html" import render_field %}
+
+{% block title %}
+{% if request.path.endswith('create') %}New Post{% else %}Update Post{% endif %}
+{% endblock %}
+
+
+{% block content %}
+  <form class="needs-validation" method="post" action="{{ action }}" novalidate>
+    {{ form.csrf_token }}
+    {{ render_field(form.title, placeholder="Title", autofocus="") }}
+    {{ render_field(form.body, placeholder="Body") }}
+
+    <input class="btn btn-primary" type="submit" value="Submit">
+  </form>
+{% endblock %}

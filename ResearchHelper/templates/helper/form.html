@@ -1,12 +1,12 @@
 {% macro render_field(field, 
   placeholder=None, 
-  helptext=None, 
-  checkbox=False,
+  help=None, 
+  invalid_feedback="This field is required.",
   group_class=None) 
 %}
-  
-{% if checkbox %}
 
+
+{% if field.type == "BooleanField" %}
   <div class="form-group form-check {{ group_class }}">
     {% set css_class = 'form-check-input ' + kwargs.pop('class', '') %}
     {% if field.errors %}
@@ -16,16 +16,18 @@
     {% endif %}
     
     {{ field(class=css_class, **kwargs)|safe }}
-    
+  
     <label class="form-check-label" for="{{ field.label.field_id }}">{{ field.label.text }}</label>
-
-    {% if field.errors %}
+    
     <div class="invalid-feedback">
+    {% if field.errors %}
       {% for error in field.errors %}
         {{ error }}
       {% endfor %}
-    </div>
+    {% else %}
+      {{ invalid_feedback }}
     {% endif %}
+    </div>
   </div>
   
 {% else %}
@@ -42,17 +44,19 @@
     
     {{ field(class=css_class, placeholder=placeholder, **kwargs)|safe }}
     
-    {% if helptext %}
-    <small id="{{ field.id }}-help" class="form-text text-muted">{{ helptext }}</small>
+    {% if help %}
+    <small id="{{ field.id }}-help" class="form-text text-muted">{{ help }}</small>
     {% endif %}
-
-    {% if field.errors %}
+    
     <div class="invalid-feedback">
+    {% if field.errors %}
       {% for error in field.errors %}
         {{ error }}
       {% endfor %}
-    </div>
+    {% else %}
+      {{ invalid_feedback }}
     {% endif %}
+    </div>
   </div>
 
 {% endif %}
