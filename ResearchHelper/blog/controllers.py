@@ -85,7 +85,6 @@ def delete(id):
 
 @bp.route('/api/<int:id>', methods=('GET',))
 @bp.route('/api/', methods=('GET',), defaults={'id': None})
-@login_required
 def api_index(id):
     if id is None:
         return response_json(
