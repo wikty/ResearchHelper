@@ -66,3 +66,10 @@ def file_uniquename(dirname=None, ext=''):
         uid = rlid_generator(32)
         filename = '.'.join([uid, ext]).rstrip('.')
 
+
+def split_delimiter_quoted_str(s, delimiter=',', quote='"'):
+    # https://stackoverflow.com/questions/16710076/python-split-a-string-respect-and-preserve-quotes
+    return re.findall(
+        r'(?:[^\s{d}{q}]|{q}(?:\\.|[^{q}])*{q})+'.format(d=delimiter, q=quote), 
+        s
+    )

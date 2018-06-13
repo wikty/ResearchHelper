@@ -1,12 +1,14 @@
 # Import from outsite of current package
 from ResearchHelper.db import db
 from ResearchHelper.db import TimestampModelMixin
+from ResearchHelper.db import CommaSeparatedStr
 from ResearchHelper.helper import login_required
 from ResearchHelper.utils import file_uniquename
 from ResearchHelper.utils import file_fingerprint
 from ResearchHelper.utils import rlid_generator
 from ResearchHelper.utils import uuid_generator
 from ResearchHelper.models import User
+from ResearchHelper.forms import CommaListField
 
 # Expose the inside of current package
 from .controllers import bp

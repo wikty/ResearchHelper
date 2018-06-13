@@ -1,5 +1,6 @@
 from . import db
 from . import TimestampModelMixin
+from . import CommaSeparatedStr
 from . import User
 from .config import mod_name
 
@@ -24,6 +25,25 @@ class File(db.Model, TimestampModelMixin):
             'created': self.created,
             'modified': self.modified
         }
+
+
+class FileMetadata(db.Model, TimestampModelMixin):
+    __tableprefix__ = mod_name
+
+    id = db.Column(db.Integer, primary_key=True)
+    file_id = db.Column(db.Integer, db.ForeignKey(File.id),
+        nullable=False, primary_key=True)
+    title = db.Column(db.String, nullable=True)
+    abstract = db.Column(db.Text, nullable=True)
+    date = db.Column(db.Date)
+    toc = db.Column(db.Text)
+    thema = db.Column(db.String)
+    authors = db.Column(CommaSeparatedStr)
+    keywords = db.Column(CommaSeparatedStr)
+
+    file = db.relationship(File,
+        lazy='joined',
+        backref=db.backref('metadatas', lazy=True))
 
 
 class FileOwnership(db.Model, TimestampModelMixin):

@@ -67,14 +67,14 @@
         
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            More
+            Files
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{{ url_for('files.upload') }}">Files Upload</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ url_for('files.manager') }}">Files Manager</a>
+            <a class="dropdown-item" href="{{ url_for('files.list') }}">Files Browser</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" href="{{ url_for('files.manager') }}">Files Manager</a>
           </div>
         </li>
 

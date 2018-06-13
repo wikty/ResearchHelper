@@ -1,3 +1,8 @@
+import re
+import csv
+import json
+from io import StringIO
+
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr, \
     has_inherited_table, declarative_base
@@ -57,6 +62,36 @@ class TimestampModelMixin(object):
     modified = db.Column(db.DateTime, 
         default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
+
+
+class JSONType(sa.types.TypeDecorator):
+    impl = sa.types.String
+
+    ensure_ascii = False
+
+    def process_bind_param(self, value, dialect):
+        return json.dumps(value, ensure_ascii=self.ensure_ascii)
+
+    def process_result_value(self, value, dialect):
+        return json.loads(value)
+
+
+class CommaSeparatedStr(sa.types.TypeDecorator):
+    impl = sa.types.String
+
+    def process_bind_param(self, value, dialect):
+        if isinstance(value, (list, tuple, set)):
+            output = StringIO()
+            writer = csv.writer(output, 
+                delimiter=',', quotechar='"')
+            writer.writerow(value)
+            s = output.getvalue()
+            output.close()
+            return s
+        return super().process_bind_param(value, dialect)
+
+    def process_result_value(self, value, dialect):
+        return re.findall(r'(?:[^\s,"]|"(?:\\.|[^"])*")+', value)
 
 
 def init_app(app):

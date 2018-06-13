@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% from "helper/form.html" import render_field %}
+
+{% block title %}Upload Manager{% endblock %}
+
+{% block content %}
+<div class="container">
+  <form class="needs-validation" method="post" novalidate>
+    {{ form.csrf_token }}
+    {{ render_field(form.title, placeholder="Title", autofocus="") }}
+    {{ render_field(form.abstract, placeholder="Abstract...") }}
+    {{ render_field(form.authors) }}
+    {{ render_field(form.keywords) }}
+    {{ render_field(form.thema) }}
+    {{ render_field(form.date) }}
+    {{ render_field(form.toc) }}
+
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+{% endblock %}

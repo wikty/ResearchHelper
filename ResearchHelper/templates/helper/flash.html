@@ -1,3 +1,4 @@
+{# flask's flash message #}
 {% macro render_messages(categories=["info", "success", "warning", "error", "message"]) %}
     {% with messages = get_flashed_messages(with_categories=true, category_filter=categories) %}
       {% if messages %}
