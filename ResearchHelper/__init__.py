@@ -43,7 +43,8 @@ def create_app(test_config=None):
             'appmeta': 'sqlite:///{}'.format(
                 os.path.join(app.instance_path, 'appmeta.sqlite3')),
         },
-        JSON_AS_ASCII=False
+        JSON_AS_ASCII=False,
+        MAX_CONTENT_LENGTH=64 * 1024 * 1024, # 64MB limit for upload file
     )
     # Overrides the default configuration, i.e., production mode
     if test_config is None:
@@ -102,5 +103,10 @@ def create_app(test_config=None):
     # register admin
     from . import admin
     app.register_blueprint(admin.bp)
+    # register upload
+    from . import files
+    app.register_blueprint(files.bp)
+    files.configure_uploads(app, (files.files_collection,)) # register upload sets
+    files.patch_request_class(app, size=None) # config via MAX_CONTENT_LENGTH
 
     return app

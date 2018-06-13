@@ -7,7 +7,7 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        {% if url_for('index') == request.url %}
+        {% if url_for('index') == request.path %}
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
         </li>
@@ -26,10 +26,16 @@
         #}
 
         {% if g.user.is_admin() %}
+        {% if url_for('admin.index') == request.path %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('admin.index') }}">Admin <span class="sr-only">(current)</span></a>
+        </li>
+        {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a>
         </li>
-        {% endif %}       
+        {% endif %}
+        {% endif %}     
 
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
@@ -37,7 +43,7 @@
 
         {% else %}
 
-        {% if url_for('auth.login') == request.url %}
+        {% if url_for('auth.login') == request.path %}
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('auth.login') }}">Sign in <span class="sr-only">(current)</span></a>
         </li>
@@ -47,7 +53,7 @@
         </li>
         {% endif %}
 
-        {% if url_for('auth.register') == request.url %}
+        {% if url_for('auth.register') == request.path %}
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('auth.register') }}">Sign up <span class="sr-only">(current)</span></a>
         </li>
@@ -58,18 +64,22 @@
         {% endif %}
 
         {% endif %}
-        <!-- <li class="nav-item dropdown">
+        
+        <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
+            More
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="{{ url_for('files.upload') }}">Files Upload</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{ url_for('files.manager') }}">Files Manager</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">Something else here</a>
           </div>
         </li>
-        <li class="nav-item">
+
+        <!-- disable -->
+        <!-- <li class="nav-item">
           <a class="nav-link disabled" href="#">Disabled</a>
         </li> -->
       </ul>

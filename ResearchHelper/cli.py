@@ -4,7 +4,7 @@ from flask.cli import with_appcontext, AppGroup
 
 from .db import db
 from .models import InvitationCode
-from .utils import id_generator
+from .utils import rlid_generator
 
 db_cli = AppGroup('db')
 
@@ -71,12 +71,12 @@ generate_cli = AppGroup('invitation')
 
 def generate_invitation(count, length=32):
     for i in range(count):
-        uid = id_generator(length)
+        uid = rlid_generator(length)
         while True:
             code = InvitationCode.query.filter_by(code=uid).first()
             if code is None:
                 break
-            uid = id_generator(length)
+            uid = rlid_generator(length)
         code = InvitationCode(code=uid)
         db.session.add(code)
         db.session.commit()

@@ -1,13 +1,20 @@
 {% extends "base.html" %}
+
 {% block title %}Upload{% endblock %}
+
 {% block script %}
   <script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-  <div class="row">
-    <div class="col">
+<div class="container mt-5 mb-5 text-center">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-7 col-12">
+      <h1 class="mx-auto">Upload Your File</h1>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-12">
       <form class="form-inline form-upload" method="post" enctype="multipart/form-data">
         <div class="input-group mx-auto">
           <div class="custom-file">
@@ -23,7 +30,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="progress-bar-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="progress-bar-modal-label" aria-hidden="true">
+<!-- upload progress bar -->
+<!-- <div class="modal fade" id="progress-bar-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="progress-bar-modal-label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="progress">
@@ -31,5 +39,5 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 {% endblock %}
