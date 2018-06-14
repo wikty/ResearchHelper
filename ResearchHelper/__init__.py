@@ -60,12 +60,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
+    
+    # register controllers
+    from . import controllers
+    controllers.init_app(app)
     # register error handler
     from . import error_handler
     error_handler.init_app(app)
