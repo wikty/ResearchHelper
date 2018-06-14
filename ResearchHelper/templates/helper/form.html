@@ -1,19 +1,18 @@
 {# wtforms's form #}
 {% macro render_field(field, 
-  placeholder=None, 
-  help=None, 
+  placeholder="", 
+  help="", 
   invalid_feedback="This field is required.",
-  group_class=None) 
+  group_class="") 
 %}
 
 
 {% if field.type == "BooleanField" %}
   <div class="form-group form-check {{ group_class }}">
     {% set css_class = 'form-check-input ' + kwargs.pop('class', '') %}
+    
     {% if field.errors %}
     {% set css_class = css_class + ' is-invalid' %}
-    {% else %}
-    {% set css_class = css_class + ' is-valid' %}
     {% endif %}
     
     {{ field(class=css_class, **kwargs)|safe }}
@@ -21,24 +20,48 @@
     <label class="form-check-label" for="{{ field.label.field_id }}">{{ field.label.text }}</label>
     
     <div class="invalid-feedback">
-    {% if field.errors %}
+    {% if request.method == "GET" %}
+      {{ invalid_feedback }}
+    {% elif field.errors %}
       {% for error in field.errors %}
         {{ error }}
       {% endfor %}
-    {% else %}
-      {{ invalid_feedback }}
     {% endif %}
     </div>
   </div>
-  
+
+{% elif field.type == "FileField" %}
+  <div class="form-group {{ group_class }}">
+    {% set css_class = 'custom-file-input ' + kwargs.pop('class', '') %}
+    {% if field.errors %}
+    {% set css_class = css_class + ' is-invalid' %}
+    {% endif %}
+
+    <div class="custom-file">
+      {{ field(class=css_class, **kwargs)|safe }}
+      <label class="custom-file-label" for="{{ field.label.field_id }}">{{ field.label.text }}</label>
+
+      {% if help %}
+      <small id="{{ field.id }}-help" class="form-text text-muted">{{ help }}</small>
+      {% endif %}
+
+      <div class="invalid-feedback">
+      {% if request.method == "GET" %}
+        {{ invalid_feedback }}
+      {% elif field.errors %}
+        {% for error in field.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+      </div>
+    </div>
+  </div>
 {% else %}
   
   <div class="form-group {{ group_class }}">
     {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
     {% if field.errors %}
     {% set css_class = css_class + ' is-invalid' %}
-    {% else %}
-    {% set css_class = css_class + ' is-valid' %}
     {% endif %}
     
     {{ field.label }}
@@ -50,12 +73,12 @@
     {% endif %}
     
     <div class="invalid-feedback">
-    {% if field.errors %}
+    {% if request.method == "GET" %}
+      {{ invalid_feedback }}
+    {% elif field.errors %}
       {% for error in field.errors %}
         {{ error }}
       {% endfor %}
-    {% else %}
-      {{ invalid_feedback }}
     {% endif %}
     </div>
   </div>

@@ -8,6 +8,7 @@
 <div class="container">
   <form class="needs-validation" method="post" novalidate>
     {{ form.csrf_token }}
+    
     {{ render_field(form.title, placeholder="Title", autofocus="") }}
     {{ render_field(form.abstract, placeholder="Abstract...") }}
     {{ render_field(form.authors) }}

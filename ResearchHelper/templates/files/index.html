@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
+{% from "helper/form.html" import render_field %}
+
 {% block title %}Upload{% endblock %}
 
 {% block script %}
-  <script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script>
+  <!-- <script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script> -->
 {% endblock %}
 
 {% block content %}
@@ -15,14 +17,14 @@
   </div>
   <div class="row justify-content-center">
     <div class="col-md-7 col-12">
-      <form class="form-inline form-upload" method="post" enctype="multipart/form-data">
+      <form class="form-inline form-upload needs-validation" method="post" enctype="multipart/form-data" novalidate>
+        
+        {{ form.csrf_token }}
+
         <div class="input-group mx-auto">
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" name="file" id="file">
-            <label class="custom-file-label" for="file">Choose file</label>
-          </div>
+          {{ render_field(form.file, help="Please upload your file.") }}
           <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="submit">Upload</button>
+            {{ form.submit(class="btn btn-outline-primary") }}
           </div>
         </div>
       </form> 
