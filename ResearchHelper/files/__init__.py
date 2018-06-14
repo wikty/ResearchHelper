@@ -17,3 +17,10 @@ from .config import files_collection
 
 # `from auth import *` will import those modules
 __all__ = ['config', 'controllers', 'models', "forms"]
+
+
+def init_app(app):
+    # add upload sets
+    configure_uploads(app, (files_collection,))
+    # upload limit config via MAX_CONTENT_LENGTH
+    patch_request_class(app, size=None)

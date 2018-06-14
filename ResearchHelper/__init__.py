@@ -93,8 +93,7 @@ def create_app(test_config=None):
     app.register_blueprint(admin.bp)
     # register upload
     from . import files
+    files.init_app(app)
     app.register_blueprint(files.bp)
-    files.configure_uploads(app, (files.files_collection,)) # register upload sets
-    files.patch_request_class(app, size=None) # config via MAX_CONTENT_LENGTH
 
     return app
