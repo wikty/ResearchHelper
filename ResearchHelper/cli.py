@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext, AppGroup
@@ -5,6 +8,10 @@ from flask.cli import with_appcontext, AppGroup
 from .db import db
 from .models import InvitationCode
 from .utils import rlid_generator
+
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 db_cli = AppGroup('db')
 
@@ -107,6 +114,96 @@ def get_invitation_command(count):
         click.echo('{} cannot be allocated.'.format(count-len(codes)))    
 
 
+mod_cli = AppGroup('mod')
+
+
+def new_mod(dirname, mod_name):
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+    files = [{
+        'name': '__init__.py',
+        'lines': [
+            'from ResearchHelper.db import db',
+            'from ResearchHelper.db import TimestampModelMixin',
+            'from ResearchHelper.helper import login_required',
+            '',
+            'from .controllers import bp',
+            '',
+            "__all__ = ['config', 'controllers', 'models']"
+        ]
+    }, {
+        'name': 'config.py',
+        'lines': [
+            "mod_name='{}'".format(mod_name)
+        ]
+    }, {
+        'name': 'controllers.py',
+        'lines': [
+            'from flask import Flask, Blueprint, request, render_template, \\',
+            '    flash, g, session, redirect, url_for, abort',
+            'from . import db',
+            'from . import TimestampModelMixin',
+            'from . import login_required',
+            'from .config import mod_name',
+            '',
+            '',
+            'bp = Blueprint(mod_name, __name__, url_prefix="/{}")'.format(mod_name),
+            '',
+            '',
+            "@bp.route('/')",
+            'def index():',
+            '    return "{} index"'.format(mod_name)
+        ]
+    }, {
+        'name': 'models.py',
+        'lines': [
+            'from . import db, TimestampModelMixin',
+            'from .config import mod_name',
+            '',
+            '',
+            '# class FooBar(db.Model, TimestampModelMixin):',
+            '#     __tableprefix__ = mod_name',
+            '#     id = db.Column(db.Integer, primary_key=True)',
+            '#     name = db.Column(db.String, nullable=False, unique=True)',
+            '',
+            '#     @property',
+            '#     def serialize(self):',
+            '#         return {',
+            '#             "id": self.id',
+            '#             "name": self.name',
+            '#         }',
+            '',
+            '#     @classmethod',
+            '#     def form_meta_kwargs(cls):',
+            '#         return {}',
+            '',
+            '#     def __repr__(self):',
+            '#         return "<FooBar name=%r> % self.name"'
+        ]
+    }]
+    for file in files:
+        with open(os.path.join(dirname, file['name']), 'w', encoding='utf8') as f:
+            f.write('\n'.join(file['lines']))
+
+
+@mod_cli.command('new')
+@click.argument('mod_name')
+@click.option('--dir', 
+    default=current_dir, 
+    help="mod's parent directory path")
+def new_mod_command(mod_name, dir):
+    dirname = os.path.join(dir, mod_name)
+    msg = 'The mod [{}] exists, Do you want to override it?'.format(mod_name)
+    if (os.path.isdir(dirname) 
+        and (not click.confirm(msg))):
+        click.echo('Bye!')
+    else:
+        new_mod(dirname, mod_name)
+        click.echo('[{}] mod is created.'.format(mod_name))
+        click.echo('Please register its blueprint in the app factory.')
+
+
 def init_app(app):
     app.cli.add_command(db_cli)
     app.cli.add_command(generate_cli)
+    app.cli.add_command(mod_cli)
