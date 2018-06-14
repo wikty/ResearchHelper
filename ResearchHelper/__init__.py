@@ -69,6 +69,9 @@ def create_app(test_config=None):
     # register error handler
     from . import error_handler
     error_handler.init_app(app)
+    # register pre-request
+    from . import pre_request
+    pre_request.init_app(app)
     # register db
     from . import db
     db.init_app(app)

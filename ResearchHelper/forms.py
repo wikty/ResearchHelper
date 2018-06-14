@@ -1,16 +1,21 @@
 ###
+# WTForms form: declarative Form base class.
+# More: https://wtforms.readthedocs.io/en/stable/forms.html
+###
+from wtforms.form import Form as WTFForm
+
+###
 # Flask-WTF: simple integration of Flask and WTForms, including CSRF, 
 # file upload, and reCAPTCHA.
+# A improved version of WTForms.form.Form, please use it as Form base
+# instead of WTForms.form.Form.
 ###
-from flask_wtf import FlaskForm
+# The form base class used in the my application
+from flask_wtf import FlaskForm as BaseForm
 from flask_wtf.file import FileField
 from flask_wtf.file import FileRequired
 from flask_wtf.file import FileAllowed
-###
-# WTForms-Alchemy: a WTForms extension toolkit for easier creation of
-# model based forms. 
-###
-from wtforms_alchemy import model_form_factory
+
 ###
 # WTForms fields: fields are responsible for rendering and data 
 # conversion. they delegate to validators for data validation.
@@ -39,6 +44,7 @@ from wtforms.fields import FormField
 # Encapsulate an ordered list of multiple instances of the same 
 # field type, keeping data as a list.
 from wtforms.fields import FieldList
+
 ###
 # WTForms widgets: widgets are classes whose purpose are to render
 # a field to its usable representation.
@@ -53,6 +59,7 @@ from wtforms.widgets import PasswordInput
 from wtforms.widgets import TextInput
 from wtforms.widgets import ListWidget
 from wtforms.widgets import TableWidget
+
 ###
 # WTForms validators: A validator simply takes an input, verifies it
 # fulfills some criterion, such as a maximum length for a string and
@@ -101,11 +108,32 @@ from wtforms.validators import AnyOf
 # NoneOf(values, message=None, values_formatter=None)
 from wtforms.validators import NoneOf
 
+###
+# WTforms extensions:
+# WTForms ships with a number of extensions that make it easier to 
+# work with other frameworks and libraries, such as Django/SQLAlchemy.
+# Most of WTForms extentsions provide a generator for automatically 
+# creating forms based on other frameworks' ORM models, such as SQLAlchemy.
+###
+# access/query SQLAlchemy models data from forms
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
+# generate forms from SQLAlchemy models
+from wtforms.ext.sqlalchemy.orm import model_form as sa_model_form
+
+
+###
+# WTForms-Alchemy: a WTForms extension toolkit for easier creation of
+# model based forms. 
+###
+from wtforms_alchemy import model_form_factory
+
+
 
 from .db import db
 
 
-BaseModelForm = model_form_factory(FlaskForm)
+BaseModelForm = model_form_factory(BaseForm)
 
 
 class ModelForm(BaseModelForm):
@@ -156,6 +184,11 @@ def form_factory(model, fields=[], **meta_kwargs):
     for fieldname, fieldtype in fields:
         cls.fieldname = fieldtype
     return cls
+
+def sqlalchemy_form_factory(model, only=None, exclude=None, **kwargs):
+    return sa_model_form(model, 
+        db_session=db.session, base_class=FlaskForm, 
+        only=only, exclude=exclude, **kwargs)
 
 # Custom Fields
 class CommaListField(Field):

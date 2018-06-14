@@ -13,16 +13,19 @@ from .config import mod_name
 bp = Blueprint(mod_name, __name__, url_prefix='/auth')
 
 
-# registers a function to load user before view running
-@bp.before_app_request
-def load_logged_in_user():
-    """If a user id is stored in the session, load the user object from
-    the database into `g.user`."""
-    user_id = session.get('user_id', None)
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = User.query.filter_by(id=user_id).first()
+# registers a function to load user before view running.
+# Even outside current blueprint, this functions is is executed
+# before each request
+#
+# @bp.before_app_request
+# def load_logged_in_user():
+#     """If a user id is stored in the session, load the user object from
+#     the database into `g.user`."""
+#     user_id = session.get('user_id', None)
+#     if user_id is None:
+#         g.user = None
+#     else:
+#         g.user = User.query.filter_by(id=user_id).first()
 
 
 # login view
