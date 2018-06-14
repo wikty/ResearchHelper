@@ -126,6 +126,14 @@ def new_mod(dirname, mod_name):
             'from ResearchHelper.db import db',
             'from ResearchHelper.db import TimestampModelMixin',
             'from ResearchHelper.helper import login_required',
+            '# inherit forms via Flask-WTF FlaskForm base class',
+            'from ResearchHelper.forms import BaseForm',
+            '# create forms via WTForms.ext.sqlalchemy.model_form factory',
+            'from ResearchHelper.forms import baseclass_form_factory',
+            '# inherit forms via WTForms-Alchemy ModelForm(a subclass of FlaskForm)',
+            'from ResearchHelper.forms import ModelForm',
+            '# create forms via WTForms-Alchemy factory',
+            'from ResearchHelper.forms import metaclass_form_factory',
             '',
             'from .controllers import bp',
             '',
@@ -179,6 +187,26 @@ def new_mod(dirname, mod_name):
             '',
             '#     def __repr__(self):',
             '#         return "<FooBar name=%r> % self.name"'
+        ]
+    }, {
+        'name': 'forms.py',
+        'lines': [
+            'from wtforms.fields import StringField, TextAreaField, PasswordField, \\',
+            '    SubmitField, FieldList, SelectField, RadioField, \\',
+            '    SelectMultipleField, DateField, DateTimeField, FloatField, \\',
+            '    DecimalField, BooleanField',
+            '',
+            'from wtforms.validators import DataRequired, InputRequired, Email,\\',
+            '    EqualTo, NumberRange, Optional, Length, NumberRange, Regexp, \\',
+            '    AnyOf, NoneOf, UUID, URL, ValidationError, StopValidation',
+            '',
+            'from . import BaseForm',
+            '',
+            '',
+            '# class FooBarForm(BaseForm):',
+            '#     name = StringField("Name Label", validators=[',
+            '#         DataRequired(message="name is required.")',
+            '#     ])'
         ]
     }]
     for file in files:
