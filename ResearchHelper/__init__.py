@@ -93,5 +93,8 @@ def create_app(test_config=None):
     from . import files
     files.init_app(app)
     app.register_blueprint(files.bp)
+    # register paper
+    from . import paper
+    app.register_blueprint(paper.bp)
 
     return app
