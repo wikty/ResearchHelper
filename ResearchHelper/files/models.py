@@ -1,15 +1,8 @@
-import sqlalchemy as sa
-from flask import g
-
 from . import db
 from . import TimestampModelMixin
 from . import CommaSeparatedStr
 from . import User
-from . import file_fingerprint
-from . import file_uniquename
-from . import uuid_generator
 from .config import mod_name
-from .config import get_upload_folder
 
 
 
@@ -82,59 +75,3 @@ class FileOwnership(db.Model, TimestampModelMixin):
             'created': self.created,
             'modified': self.modified
         }
-
-
-def save_file(file):
-    """Save file and record it in to database.
-    :param file: a file object
-    :return (message, status), uuid
-    """
-    fingerprint = file_fingerprint(file) # calulate file content fingerprint
-    file.seek(0) # reset file pointer
-    if fingerprint is None:
-        return (('Something wrong with server, please contact admin.', 'warning'), None)
-
-    # create and store file
-    file_model = File.query.filter_by(fingerprint=fingerprint).first()
-    if file_model is None:
-        ext = ''
-        if '.' in filename:
-            ext = filename.rsplit('.', 1)[1]
-        filename = file_uniquename(
-            dirname=get_upload_folder(current_app), 
-            ext=ext
-        )
-        try:
-            full_filename = files_collection.save(file, 
-                folder=filename[:2], name=filename)
-        except UploadNotAllowed as e:
-            return (('Upload Failed!', 'warning'), None)
-        
-        url = files_collection.url(full_filename)
-        uuid = None
-        while True:
-            uuid = uuid_generator()
-            if File.query.filter_by(uuid=uuid).first() is None:
-                break
-        file_model = File(
-            uuid=uuid,
-            url=url,
-            fingerprint=fingerprint,
-            dirname=filename[:2],
-            filename=filename
-        )
-        db.session.add(file_model)
-
-    # create file ownership
-    ownership = FileOwnership.query.filter(sa.and_(
-        FileOwnership.user_id == g.user.id,
-        FileOwnership.file_id == file_model.id
-    )).first()
-    if ownership is None:
-        ownership = FileOwnership(file=file_model, user=g.user)
-        db.session.add(ownership)
-    else:
-        ownership.count = ownership.count + 1
-    
-    db.session.commit()
-    return (('Upload Success!', 'success'), file_model.uuid)

@@ -14,6 +14,7 @@
                   <th scope="col">#</th>
                   <th scope="col">UUID</th>
                   <th scope="col">File</th>
+                  <th scope="col">Count</th>
                   <th scope="col">Manage</th>
                 </tr>
               </thead>
@@ -21,10 +22,11 @@
                 {% if pagination.items %}
                 {% for item in pagination.items %}
                 <tr>
-                  <th scope="row">{{ item.id }}</th>
-                  <td>{{ item.uuid }}</td>
-                  <td><a href="{{ item.url }}" title="{{ item.filename }}">Download</a></td>
-                  <td><a href="{{ url_for('.manager', uuid=item.uuid) }}">Go</a></td>
+                  <th scope="row">{{ item.file.id }}</th>
+                  <td>{{ item.file.uuid }}</td>
+                  <td><a href="{{ item.file.url }}" title="{{ item.file.filename }}">Download</a></td>
+                  <td>{{ item.count }}</td>
+                  <td><a href="{{ url_for('.manager', uuid=item.file.uuid) }}">Go</a></td>
                 </tr>
                 {% endfor %}
                 {% endif %}
