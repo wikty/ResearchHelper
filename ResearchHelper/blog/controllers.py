@@ -39,7 +39,7 @@ def index():
 
 @bp.route('/<int:id>')
 def detail(id):
-    post = get_post(id)
+    post = get_post(id, False)
     post.series = PostSeries.query.get(post.series_id)
     return render_template('blog/single.html', post=post)
 
