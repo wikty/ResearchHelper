@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Post Category Single{% endblock %}
+
+{% block content %}
+<div class="container my-2">
+{{ category.id }}, {{ category.name }}, {{ category.parent_id }}
+</div>
+{% endblock %}

@@ -9,8 +9,13 @@ from . import login_required
 from . import response_json
 from . import status_code
 from .models import Post
+from .models import PostCategory
+from .models import PostTag
 from .models import PostSeries
 from .forms import PostForm
+from .forms import PostCategoryForm
+from .forms import PostTagForm
+from .forms import PostSeriesForm
 from .config import mod_name
 
 
@@ -30,6 +35,7 @@ def get_post(id, check_author=True):
         abort(403)
     return post
 
+# CRUD of blog
 
 @bp.route('/')
 def index():
@@ -100,6 +106,126 @@ def api_index(id):
             post=post.serialize
         )
 
+# CRUD of category
+
+@bp.route('/category/')
+def category_index():
+    categories = PostCategory.query.all()
+    return render_template('blog/category/list.html', category_list=categories)
+
+
+@bp.route('/category/<int:id>')
+def category_detail(id):
+    category = PostCategory.query.get_or_404(id)
+    return render_template('blog/category/single.html', category=category)
+
+
+@bp.route('/category/create', methods=('GET', 'POST'))
+@login_required
+def category_create():
+    form = PostCategoryForm()
+    if form.validate_on_submit():
+        category = PostCategory()
+        form.populate_obj(category)
+        if form.parent.data is None:
+            category.parent_id = -1
+        else:
+            category.parent_id = form.parent.id
+        db.session.add(category)
+        db.session.commit()
+        flash('{} is created.'.format(category))
+        return redirect(url_for('.category_index'))
+    return render_template('blog/category/form.html', 
+        form=form, action=url_for('.category_create'))
+
+
+# for now user can update/delete others' category
+# should be fix this in later.
+@bp.route('/category/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def category_update(id):
+    category = PostCategory.query.get_or_404(id)
+    form = PostCategoryForm(obj=category)
+    if form.validate_on_submit():
+        form.populate_obj(category)
+        if form.parent.data is None:
+            category.parent_id = -1
+        else:
+            category.parent_id = form.parent.id
+        db.session.commit()
+        flash('{} is updated.'.format(category))
+        return redirect(url_for('.category_index'))
+    return render_template('blog/category/form.html',
+        form=form, action=url_for('.category_update'))
+
+
+@bp.route('/category/<int:id>/delete', methods=('GET', 'POST'))
+@login_required
+def category_delete(id):
+    category = PostCategory.query.get_or_404(id)
+    db.session.delete(category)
+    db.session.commit()
+    flash('{} is deleted.'.format(category))
+    return redirect(url_for('.category_index'))
+
+
+# CRUD of tag
+
+# @bp.route('/category/')
+# def category_index():
+#     categories = PostCategory.query.all()
+#     return render_template('blog/category/list.html', category_list=categories)
+
+# @bp.route('/category/<int:id>')
+# def category_detail(id):
+#     category = PostCategory.query.get_or_404(id)
+#     return render_template('blog/category/single.html', category=category)
+
+# @bp.route('/category/create', methods=('GET', 'POST'))
+# @login_required
+# def category_create():
+#     pass
+
+# @bp.route('/category/<int:id>/update', methods=('GET', 'POST'))
+# @login_required
+# def category_update(id):
+#     pass
+
+# @bp.route('/category/<int:id>/delete', methods=('GET', 'POST'))
+# @login_required
+# def category_delete(id):
+#     pass
+
+
+# CRUD of series
+
+# @bp.route('/category/')
+# def category_index():
+#     categories = PostCategory.query.all()
+#     return render_template('blog/category/list.html', category_list=categories)
+
+# @bp.route('/category/<int:id>')
+# def category_detail(id):
+#     category = PostCategory.query.get_or_404(id)
+#     return render_template('blog/category/single.html', category=category)
+
+# @bp.route('/category/create', methods=('GET', 'POST'))
+# @login_required
+# def category_create():
+#     pass
+
+# @bp.route('/category/<int:id>/update', methods=('GET', 'POST'))
+# @login_required
+# def category_update(id):
+#     pass
+
+# @bp.route('/category/<int:id>/delete', methods=('GET', 'POST'))
+# @login_required
+# def category_delete(id):
+#     pass
+
+
+# CRUD API of blog
 
 @bp.route('/api/create', methods=('POST',))
 @login_required

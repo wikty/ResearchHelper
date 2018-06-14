@@ -3,19 +3,18 @@
 {% from "helper/form.html" import render_field %}
 
 {% block title %}
-{% if request.path.endswith('create') %}New Post{% else %}Update Post{% endif %}
+{% if request.path.endswith('create') %}New Category{% else %}Update Category{% endif %}
 {% endblock %}
 
 
 {% block content %}
 <div class="container my-2">
   <form class="needs-validation" method="post" action="{{ action }}" novalidate>
+    
     {{ form.csrf_token }}
-    {{ render_field(form.title, placeholder="Title", autofocus="") }}
-    {{ render_field(form.body, placeholder="Body") }}
-    {{ render_field(form.categories) }}
-    {{ render_field(form.tags) }}
-    {{ render_field(form.series) }}
+
+    {{ render_field(form.name, placeholder="Category...", autofocus="") }}
+    {{ render_field(form.parent) }}
 
     <input class="btn btn-primary" type="submit" value="Submit">
   </form>
