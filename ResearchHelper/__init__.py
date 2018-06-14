@@ -65,8 +65,8 @@ def create_app(test_config=None):
     from . import controllers
     controllers.init_app(app)
     # register error handler
-    from . import error_handler
-    error_handler.init_app(app)
+    from . import handlers
+    handlers.init_app(app)
     # register pre-request
     from . import pre_request
     pre_request.init_app(app)
