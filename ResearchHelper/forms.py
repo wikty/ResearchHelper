@@ -244,3 +244,45 @@ class CommaListField(BaseField):
         else:
             self.data = []
 
+def select_field_factory(field_name,
+    form_class, 
+    form_instance=None,
+    query_factory=None,
+    get_label=None,
+    blank_allowed=True,
+    blank_label="",
+    multiple_selected=False,
+    **field_kwargs):
+    """Create select field using model query.
+    :param field_name: the name of field in the form.
+    :param form_class: the form class.
+    :param form_instance: the form instance.
+    :param query_factory: a function will return query result.
+    :param get_label: the label of the field. If a str is provided, then label
+        is defined by getattr(model, label). If a function is provided, then
+        the function will be called with a model instance as argument, its
+        return result will be the label. Otherwise, str(model) will be used.
+    :param multiple_selected: the field is allowed multiple selected.
+    :param field_kwargs: field arguments, e.g., label, validators, description
+        and so on, just like others field arguments.
+    """
+    # set a dynamic query result in the view
+    if form_instance:
+        field = getattr(form_instance, field_name)
+        field.query = query_factory()
+        return
+    # set a field in the form class
+    kwargs = {
+        'get_label': get_label,
+        'query_factory': query_factory,
+        'allow_blank': blank_allowed,
+        'blank_text': blank_label
+    }
+    kwargs.update(**field_kwargs)
+
+    if multiple_selected:
+        select_field = QuerySelectMultipleField(**kwargs)
+    else:
+        select_field = QuerySelectField(**kwargs)
+
+    setattr(form_class, field_name, select_field)
