@@ -8,7 +8,7 @@ from werkzeug.exceptions import abort
 
 from .db import db
 from .config import default_list_template, default_single_template
-from .forms import form_factory
+from .forms import metaclass_form_factory as form_factory
 
 
 # require authentication decorator

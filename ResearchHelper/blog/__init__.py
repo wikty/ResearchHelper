@@ -4,7 +4,7 @@ from ResearchHelper.db import TimestampModelMixin
 from ResearchHelper.api import status_code
 from ResearchHelper.helper import login_required, response_json
 from ResearchHelper.models import User
-from ResearchHelper.forms import form_factory
+from ResearchHelper.forms import metaclass_form_factory as form_factory
 
 # Expose the inside of current package
 from .controllers import bp

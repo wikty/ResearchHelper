@@ -1,4 +1,15 @@
 ###
+# Form usage methods:
+# 1. Custom form class
+# 1.1 WTForms Form base + WTForms validators
+# 1.2 Flask-WTF FlaskForm base + Flask-WTF validators + WTForms validators
+# 2. Auto-generate form class from the ORM model of SQLAlchemy
+# 2.1 use WTForms extension factory function `wtforms.ext.sqlalchemy.model_form`
+# 2.2 use WTForms-Alchemy framework meta class `ModelForm`
+# 2.3 auto-generated process needs a base form as base class. We'll use FlaskForm.
+###
+
+###
 # WTForms form: declarative Form base class.
 # More: https://wtforms.readthedocs.io/en/stable/forms.html
 ###
@@ -20,7 +31,7 @@ from flask_wtf.file import FileAllowed
 # WTForms fields: fields are responsible for rendering and data 
 # conversion. they delegate to validators for data validation.
 ###
-from wtforms.fields import Field
+from wtforms.fields import Field as BaseField
 from wtforms.fields import BooleanField
 from wtforms.fields import DateField
 from wtforms.fields import DateTimeField
@@ -121,21 +132,22 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 # generate forms from SQLAlchemy models
 from wtforms.ext.sqlalchemy.orm import model_form as sa_model_form
 
-
 ###
-# WTForms-Alchemy: a WTForms extension toolkit for easier creation of
-# model based forms. 
+# WTForms-Alchemy: a toolkit for easier creation of model based forms.
+# This is a improved tool of the `wtforms.ext.sqlalchemy.orm.model_form`,
+# while you can use QuerySelectField and QuerySelectMultipleField along
+# with it.
 ###
 from wtforms_alchemy import model_form_factory
 
-
-
 from .db import db
+from .utils import split_delimiter_quoted_str
 
 
 BaseModelForm = model_form_factory(BaseForm)
 
-
+# You can super this class to create form class or use the following
+# metaclass_form_factory.
 class ModelForm(BaseModelForm):
     @classmethod
     def get_session(self):
@@ -149,7 +161,8 @@ class ModelForm(BaseModelForm):
 #         model = User
 
 
-def form_factory(model, fields=[], **meta_kwargs):
+def metaclass_form_factory(model, 
+    fields=[], enable_default_validators=True, **meta_kwargs):
     """"
     Some kwargs configuration for the form:
     only=[]
@@ -173,6 +186,15 @@ def form_factory(model, fields=[], **meta_kwargs):
     """
     classname = '{}Form'.format(model.__name__)
     kwargs = {'model': model}
+    # disable WTForms-Alchemy default validators
+    if not enable_default_validators:
+        kwargs['email_validator'] = None
+        kwargs['length_validator'] = None
+        kwargs['unique_validator'] = None
+        kwargs['number_range_validator'] = None
+        kwargs['date_range_validator'] = None
+        kwargs['time_range_validator'] = None
+        kwargs['optional_validator'] = None
     # get meta args from model class method
     if hasattr(model, 'form_meta_kwargs'):
         kwargs.update(model.form_meta_kwargs())
@@ -185,27 +207,40 @@ def form_factory(model, fields=[], **meta_kwargs):
         cls.fieldname = fieldtype
     return cls
 
-def sqlalchemy_form_factory(model, only=None, exclude=None, **kwargs):
-    return sa_model_form(model, 
-        db_session=db.session, base_class=FlaskForm, 
-        only=only, exclude=exclude, **kwargs)
+
+def baseclass_form_factory(model, 
+    only=None, exclude=None, exclude_pk=True, exclude_fk=True, **kwargs):
+    """https://wtforms.readthedocs.io/en/2.2.1/ext.html#wtforms.ext.sqlalchemy.orm.model_form"""
+    classname = '{}Form'.format(model.__name__)
+    return sa_model_form(
+        model=model, 
+        db_session=db.session, 
+        base_class=BaseForm, 
+        only=only, 
+        exclude=exclude, 
+        type_name=classname,
+        exclude_pk=exclude_pk,
+        exclude_fk=exclude_fk,
+        **kwargs
+    )
+
 
 # Custom Fields
-class CommaListField(Field):
+class CommaListField(BaseField):
     """A comma-separated list of tags."""
     widget = TextInput()
 
     def _value(self):
         # invoked by the TextInput widget to display the value of field
         if self.data:
-            return ', '.join(self.data)
+            return ','.join(self.data)
         else:
             return ''
 
     def process_formdata(self, valuelist):
         # invoked when form data income
         if valuelist:
-            self.data = [x.strip() for x in valuelist[0].split(',')]
+            self.data = split_delimiter_quoted_str(valuelist[0])
         else:
             self.data = []
 
