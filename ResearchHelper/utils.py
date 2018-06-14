@@ -58,7 +58,7 @@ def file_uniquename(dirname=None, ext=''):
     """Get a unique file name of a directory."""
     uid = rlid_generator(32)
     filename = '.'.join([uid, ext]).rstrip('.')
-    if not os.path.isdir(dirname):
+    if (not dirname) or (not os.path.isdir(dirname)):
         return filename
     while True:
         if not os.path.isfile(os.path.join(dirname, filename)):
