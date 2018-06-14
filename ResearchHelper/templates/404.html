@@ -3,5 +3,8 @@
 {% block title %}Not Found{% endblock %}
 
 {% block content %}
-<h1>404 - Not Found</h1>
+<div class="container">
+    <h1>404 - Not Found</h1>
+    <p class="lead">Go back to <a href="{{ url_for('index') }}">Home</a></p>
+</div>
 {% endblock %}
