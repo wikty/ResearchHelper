@@ -8,10 +8,10 @@ from flask import Flask, Blueprint, request, render_template, flash, g, \
 from . import db
 from . import admin_models
 from . import ModelAPIView
-from . import register_api
 from . import admin_required
 from . import model_filters
 from . import camel_to_snake_case
+from . import form_factory
 from .config import mod_name, single_template, list_template
 
 
@@ -24,20 +24,15 @@ for model in admin_models:
         endpoint = camel_to_snake_case(model.__tablename__)
     else:
         endpoint = camel_to_snake_case(model.__name__)
-    full_endpoint = register_api(
-        app=bp,
-        view=ModelAPIView,
+    full_endpoint = ModelAPIView.register_api(
+        blueprint=bp,
         endpoint=endpoint,
         url='/{}/'.format(endpoint),
         model=model,
+        form=form_factory(model),
         view_decorators=[admin_required,],
         view_kwargs={
-            'list_template': list_template,
-            'single_template': single_template,
-            'filters': model_filters,
-            'form_kwargs': {
-                'exclude': []
-            }
+            'filters': model_filters
         }
     )
     models.append({
@@ -45,6 +40,7 @@ for model in admin_models:
         'endpoint': full_endpoint,
         'model': model
     })
+
 
 # register admin index url
 @bp.route('/')
@@ -54,7 +50,7 @@ def index():
     for model in models:
         model_list.append({
             'name': model['name'],
-            'url': url_for(model['endpoint']),
+            'url': url_for(model['endpoint'], pk=None),
             'count': model['model'].query.count()
         })
     return render_template('admin/index.html', model_list=model_list)

@@ -22,7 +22,7 @@
                 <th scope="row">{{ loop.index }}</th>
                 <td><a href="{{ model['url'] }}">{{ model['name'] }}</a></td>
                 <td><a href="{{ model['url'] }}">{{ model['count'] }}</a></td>
-                <td><a href="{{ model['url'] }}?page=create">New</a></td>
+                <td><a href="{{ model['url'] }}?op=create">New</a></td>
             </tr>
           {% endfor %}
         </tbody>

@@ -89,23 +89,6 @@ def delete(id):
     return redirect(url_for('.index'))
 
 
-@bp.route('/api/<int:id>', methods=('GET',))
-@bp.route('/api/', methods=('GET',), defaults={'id': None})
-def api_index(id):
-    if id is None:
-        return response_json(
-            message='ok',
-            status=status_code['ok'],
-            post_list=[post.serialize for post in Post.query.all()]
-        )
-    else:
-        post = get_post(id)
-        return response_json(
-            message='ok',
-            status=status_code['ok'],
-            post=post.serialize
-        )
-
 # CRUD of category
 
 @bp.route('/category/')
@@ -225,7 +208,25 @@ def category_delete(id):
 #     pass
 
 
-# CRUD API of blog
+# JSON API of blog
+
+@bp.route('/api/<int:id>', methods=('GET',))
+@bp.route('/api/', methods=('GET',), defaults={'id': None})
+def api_index(id):
+    if id is None:
+        return response_json(
+            message='ok',
+            status=status_code['ok'],
+            post_list=[post.serialize for post in Post.query.all()]
+        )
+    else:
+        post = get_post(id)
+        return response_json(
+            message='ok',
+            status=status_code['ok'],
+            post=post.serialize
+        )
+
 
 @bp.route('/api/create', methods=('POST',))
 @login_required

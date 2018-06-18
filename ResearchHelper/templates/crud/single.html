@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% from "helper/form.html" import render_field %}
+
+{% block title %}Single{% endblock %}
+
+{% block content %}
+{% set list_url = url_for(endpoint) %}
+{% set update_url = url_for(endpoint) + '{}?op=update'.format(obj_id) %}
+{% set delete_url = url_for(endpoint) + '{}?op=delete'.format(obj_id) %}
+
+<div class="contianer my-3">
+  <div class="row">
+    <div class="col-md-8 col-12 mx-auto">
+      <h1>Detail - {{ endpoint }}</h1>
+      <form novalidate>
+        {{ form.csrf_token }}
+
+        {% for field in form %}
+          {{ render_field(field, disabled="disabled") }}
+        {% endfor %}
+      </form>
+      <table class="table">
+        <tbody>
+          <tr>
+            <td><a class="btn btn-warning" href="{{ update_url }}">Update</a></td>
+            <td><a class="btn btn-danger" href="{{ delete_url }}">Delete</a></td>
+            <td><a class="btn btn-primary" href="{{ list_url }}">Back to List</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

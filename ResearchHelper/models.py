@@ -12,6 +12,18 @@ admin_models = [
     PostCategory
 ]
 
+# common model filters
+# a filter function will accept the model class as argument and 
+# should return a query object as result.
+model_filters = {
+    'id_asc': lambda model: model.query.order_by(model.id),
+    'id_desc': lambda model: model.query.order_by(model.id.desc()),
+    'created_asc': lambda model: model.query.order_by(model.created),
+    'created_desc': lambda model: model.query.order_by(model.created.desc()),
+    'modified_asc': lambda model: model.query.order_by(model.modified),
+    'modified_desc': lambda model: model.query.order_by(model.modified.desc())
+}
+
 # CRUD
 # Create
 # Inserting data into the database is a three step process:

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% from "helper/pagination.html" import render_pagination %}
+
+{% block title %}List{% endblock %}
+
+{% block content %}
+{% set list_url = url_for(endpoint) %}
+{% set single_url = url_for(endpoint) + '{}' %}
+{% set create_url = url_for(endpoint) + '?op=create' %}
+{% set update_url = url_for(endpoint) + '{}?op=update' %}
+{% set delete_url = url_for(endpoint) + '{}/delete' %}
+
+<div class="contianer my-3">
+  <div class="row">
+    <div class="col-md-8 col-12 mx-auto">
+      <h1>List - {{ endpoint }}</h1>
+      <div class="btn-group mb-2" role="group" aria-label="Filters">
+        {% if filters %}
+        {% for filter in filters %}
+        {% set filter_name = filter.replace('_', ' ')|title %}
+        <a href="{{ list_url }}?filter={{ filter }}" class="btn btn-light {{ 'disabled' if filter == current_filter else ''}}" tabindex="-1" role="button">{{ filter_name }}</a>
+        {% endfor %}
+        {% endif %}
+
+        {% if current_filter %}
+        <a href="{{ list_url }}" class="btn btn-light" tabindex="-1" role="button">Show All</a>
+        {% endif %}
+
+        <a href="{{ create_url }}" class="btn btn-primary" tabindex="-1" role="button">New</a>
+      </div>
+    </div>
+
+    <div class="col-md-8 col-12 mx-auto">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Model</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if pagination.items %}
+          {% for item in pagination.items %}
+          <tr>
+            <td><a href="{{ single_url.format(item.id) }}">{{ item.id }}</a></td>
+            <td><a href="{{ single_url.format(item.id) }}">{{ item|string }}</a></td>
+            <td><a class="btn btn-primary" href="{{ update_url.format(item.id) }}">Update</a></td>
+            <td>
+              <form action="{{ delete_url.format(item.id) }}" method="post">
+                  <button class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure delete it?');">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-8 col-12 mx-auto">
+        {{ render_pagination(pagination, endpoint, "List pages") }}
+    </div>
+  </div>
+</div>
+{% endblock %}
