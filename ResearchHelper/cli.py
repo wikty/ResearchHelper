@@ -22,11 +22,22 @@ def create_db(bind):
     else:
         db.create_all(app=current_app, bind=bind)
 
-def drop_db(bind):
-    if bind == 'all':
-        db.drop_all(app=current_app)
+def drop_db(bind, prefix):
+    if prefix is None:
+        if bind == 'all':
+                db.drop_all(app=current_app)
+        else:
+
+            db.drop_all(app=current_app, bind=bind)
     else:
-        db.drop_all(app=current_app, bind=bind)
+        engine = None
+        if bind == 'all':
+            engine = db.get_engine(app=current_app)
+        else:
+            engine = db.get_engine(app=current_app, bind=bind)
+        for name, table in db.metadata.tables.items():
+            if name.startswith(prefix):
+                table.drop(engine)
 
 def renew_db(bind):
     if bind == 'all':
@@ -51,13 +62,14 @@ def create_db_command(bind):
 
 @db_cli.command('drop')
 @click.option('--bind', default=None, help='The database bind key')
+@click.option('--prefix', default=None, help='The table name prefix')
 @with_appcontext
-def drop_db_command(bind=None):
+def drop_db_command(bind=None, prefix=None):
     """Drop tables if exist.
     if bind is None, specify the default bind
     if bind is all, specify all of binds
     """
-    drop_db(bind)
+    drop_db(bind, prefix)
     click.echo('Droped the database.')
 
 

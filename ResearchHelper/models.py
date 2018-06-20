@@ -1,15 +1,17 @@
 from .db import db, TimestampModelMixin
 from .auth.models import User, InvitationCode
-from .blog.models import Post, PostCategory, PostTag, PostSeries
+from .taxonomy.models import (
+    Category, Tag, Series, CategoryUser, TagUser, SeriesUser,
+    CategoryAssociation, TagAssociation, SeriesAssociation, TargetModelType
+)
+from .blog.models import Post
+
 
 
 admin_models = [
     User,
     InvitationCode,
-    Post,
-    PostSeries,
-    PostTag,
-    PostCategory
+    Post
 ]
 
 # common model filters

@@ -9,7 +9,13 @@ from ResearchHelper.forms import baseclass_form_factory
 from ResearchHelper.forms import ModelForm
 # create forms via WTForms-Alchemy factory
 from ResearchHelper.forms import metaclass_form_factory
+from ResearchHelper.forms import select_field_factory
+from ResearchHelper.models import User
 
 from .controllers import bp
+from .models import TargetModelType
+from .models import Category, CategoryUser, CategoryAssociation
+from .models import Tag, TagUser, TagAssociation
+from .models import Series, SeriesUser, SeriesAssociation
 
 __all__ = ['config', 'controllers', 'models']

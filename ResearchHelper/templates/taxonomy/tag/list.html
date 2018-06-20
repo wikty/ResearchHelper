@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% from "helper/pagination.html" import render_pagination %}
+
+{% block title %}Tag List{% endblock %}
+
+{% block content %}
+{% set list_url = url_for(endpoint) %}
+{% set single_url = url_for(endpoint) + '{}' %}
+{% set create_url = url_for(endpoint) + 'create' %}
+{% set update_url = url_for(endpoint) + '{}/update' %}
+{% set delete_url = url_for(endpoint) + '{}/delete' %}
+<div class="contianer my-3">
+  <div class="row">
+    <div class="col-md-8 col-12 mx-auto">
+      <h1>Tag List</h1>
+      <div class="btn-group mb-2" role="group" aria-label="">
+        <a class="btn btn-outline-primary" href="{{ create_url }}">New</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8 col-12 mx-auto">
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Brief</th>
+            <th scope="col">Update</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if pagination.items %}
+          {% for item in pagination.items %}
+          <tr>
+            <td><a href="{{ single_url.format(item.id) }}">{{ item.id }}</a></td>
+            <td><a href="{{ single_url.format(item.id) }}">{{ item.name }}</a></td>
+            <td>{{ item.brief }}</td>
+            <td><a class="btn btn-primary" href="{{ update_url.format(item.id) }}">Update</a></td>
+            <td>
+              <form action="{{ delete_url.format(item.id) }}" method="post">
+                  <button class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure delete it?');">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+  </div>
+  <div class="col-md-8 col-12 mx-auto">
+    {{ render_pagination(pagination, endpoint, "List pages") }}
+  </div>
+</div>
+{% endblock %}

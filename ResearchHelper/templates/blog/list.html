@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% from "helper/pagination.html" import render_pagination %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+{% set list_url = url_for(endpoint) %}
+{% set create_url = url_for(endpoint) + 'create' %}
+
+<div class="container">
+  {% include "partial/jumbotron.html" %}
+</div>
+
+<div class="container">
+  <div class="row justify-content-end mb-2">
+    <div class="col-4">
+    {% if g.user %}
+      <a class="btn btn-outline-primary" href="{{ create_url }}">New Post</a>
+      <a class="btn btn-outline-secondary" href="{{ list_url }}?filter=only_my">Only See My</a>
+    {% endif %}
+    </div>
+  </div>
+  <div class="row">
+  {% if pagination.items %}
+  {% for post in pagination.items %}
+    <div class="col-md-4">
+      {% include "blog/summary.html" %}
+    </div>
+  {% endfor %}
+  {% endif %}
+  </div>
+  <div class="row justify-content-center">
+    {{ render_pagination(pagination, endpoint, "List pages") }}
+  </div>
+</div>
+{% endblock %}

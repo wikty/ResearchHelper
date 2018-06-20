@@ -9,14 +9,14 @@ from . import login_required
 from . import response_json
 from . import status_code
 from .models import Post
-from .models import PostCategory
-from .models import PostTag
-from .models import PostSeries
+# from .models import PostCategory
+# from .models import PostTag
+# from .models import PostSeries
 from .forms import PostForm
-from .forms import PostCategoryForm
-from .forms import PostTagForm
-from .forms import PostSeriesForm
-from .config import mod_name
+# from .forms import PostCategoryForm
+# from .forms import PostTagForm
+# from .forms import PostSeriesForm
+from .config import mod_name, per_page
 
 
 # don't specify url_prefix, so every rules are defined in this blueprint
@@ -27,6 +27,12 @@ from .config import mod_name
 bp = Blueprint(mod_name, __name__)
 
 
+def paginate(query, page_key='page'):
+    page = request.args.get(page_key, default=1, type=int)
+    return query.paginate(page,
+        per_page=per_page, error_out=False)
+
+
 def get_post(id, check_author=True):
     # not found, 404
     post = Post.query.get_or_404(id)
@@ -35,19 +41,33 @@ def get_post(id, check_author=True):
         abort(403)
     return post
 
+def populate_post(post, form, user):
+    post.user = user
+    post.title = form.title.data
+    post.body = form.body.data
+    post.add_series(form.series.data, user.id)
+    post.add_categories(form.categories.data, user.id)
+    post.add_tags(form.tags.data, user.id)
+
 # CRUD of blog
 
 @bp.route('/')
 def index():
-    posts = Post.query.all()
-    return render_template('blog/index.html', post_list=posts)
+    filter_name = request.args.get('filter', default=None)
+    if filter_name == 'only_my' and g.user:
+        pagination = paginate(Post.query.filter_by(user_id=g.user.id))
+    else:
+        pagination = paginate(Post.query)
+    return render_template('blog/list.html', 
+        pagination=pagination, endpoint='.index')
 
 
 @bp.route('/<int:id>')
 def detail(id):
     post = get_post(id, False)
-    post.series = PostSeries.query.get(post.series_id)
-    return render_template('blog/single.html', post=post)
+    return render_template('blog/single.html', 
+        post=post, series=post.get_series(), categories=post.get_categories(),
+        tags=post.get_tags(), endpoint='.index')
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -56,8 +76,7 @@ def create():
     form = PostForm()
     if form.validate_on_submit():
         post = Post()
-        form.populate_obj(post)
-        post.user_id = g.user.id
+        populate_post(post, form, g.user)
         db.session.add(post)
         db.session.commit()
         flash('{} is created.'.format(post))
@@ -72,7 +91,7 @@ def update(id):
     post = get_post(id)
     form = PostForm(obj=post)
     if form.validate_on_submit():
-        form.populate_obj(post)
+        populate_post(post, form, g.user)
         db.session.commit()
         flash('{} is updated.'.format(post))
         return redirect(url_for('.index'))
@@ -91,65 +110,65 @@ def delete(id):
 
 # CRUD of category
 
-@bp.route('/category/')
-def category_index():
-    categories = PostCategory.query.all()
-    return render_template('blog/category/list.html', category_list=categories)
+# @bp.route('/category/')
+# def category_index():
+#     categories = PostCategory.query.all()
+#     return render_template('blog/category/list.html', category_list=categories)
 
 
-@bp.route('/category/<int:id>')
-def category_detail(id):
-    category = PostCategory.query.get_or_404(id)
-    return render_template('blog/category/single.html', category=category)
+# @bp.route('/category/<int:id>')
+# def category_detail(id):
+#     category = PostCategory.query.get_or_404(id)
+#     return render_template('blog/category/single.html', category=category)
 
 
-@bp.route('/category/create', methods=('GET', 'POST'))
-@login_required
-def category_create():
-    form = PostCategoryForm()
-    if form.validate_on_submit():
-        category = PostCategory()
-        form.populate_obj(category)
-        if form.parent.data is None:
-            category.parent_id = -1
-        else:
-            category.parent_id = form.parent.id
-        db.session.add(category)
-        db.session.commit()
-        flash('{} is created.'.format(category))
-        return redirect(url_for('.category_index'))
-    return render_template('blog/category/form.html', 
-        form=form, action=url_for('.category_create'))
+# @bp.route('/category/create', methods=('GET', 'POST'))
+# @login_required
+# def category_create():
+#     form = PostCategoryForm()
+#     if form.validate_on_submit():
+#         category = PostCategory()
+#         form.populate_obj(category)
+#         if form.parent.data is None:
+#             category.parent_id = -1
+#         else:
+#             category.parent_id = form.parent.id
+#         db.session.add(category)
+#         db.session.commit()
+#         flash('{} is created.'.format(category))
+#         return redirect(url_for('.category_index'))
+#     return render_template('blog/category/form.html', 
+#         form=form, action=url_for('.category_create'))
 
 
-# for now user can update/delete others' category
-# should be fix this in later.
-@bp.route('/category/<int:id>/update', methods=('GET', 'POST'))
-@login_required
-def category_update(id):
-    category = PostCategory.query.get_or_404(id)
-    form = PostCategoryForm(obj=category)
-    if form.validate_on_submit():
-        form.populate_obj(category)
-        if form.parent.data is None:
-            category.parent_id = -1
-        else:
-            category.parent_id = form.parent.id
-        db.session.commit()
-        flash('{} is updated.'.format(category))
-        return redirect(url_for('.category_index'))
-    return render_template('blog/category/form.html',
-        form=form, action=url_for('.category_update'))
+# # for now user can update/delete others' category
+# # should be fix this in later.
+# @bp.route('/category/<int:id>/update', methods=('GET', 'POST'))
+# @login_required
+# def category_update(id):
+#     category = PostCategory.query.get_or_404(id)
+#     form = PostCategoryForm(obj=category)
+#     if form.validate_on_submit():
+#         form.populate_obj(category)
+#         if form.parent.data is None:
+#             category.parent_id = -1
+#         else:
+#             category.parent_id = form.parent.id
+#         db.session.commit()
+#         flash('{} is updated.'.format(category))
+#         return redirect(url_for('.category_index'))
+#     return render_template('blog/category/form.html',
+#         form=form, action=url_for('.category_update'))
 
 
-@bp.route('/category/<int:id>/delete', methods=('GET', 'POST'))
-@login_required
-def category_delete(id):
-    category = PostCategory.query.get_or_404(id)
-    db.session.delete(category)
-    db.session.commit()
-    flash('{} is deleted.'.format(category))
-    return redirect(url_for('.category_index'))
+# @bp.route('/category/<int:id>/delete', methods=('GET', 'POST'))
+# @login_required
+# def category_delete(id):
+#     category = PostCategory.query.get_or_404(id)
+#     db.session.delete(category)
+#     db.session.commit()
+#     flash('{} is deleted.'.format(category))
+#     return redirect(url_for('.category_index'))
 
 
 # CRUD of tag

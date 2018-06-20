@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Category Detail{% endblock %}
+
+{% block content %}
+{% set list_url = url_for(endpoint) %}
+{% set update_url = url_for(endpoint) + '{}/update'.format(item.id) %}
+{% set delete_url = url_for(endpoint) + '{}/delete'.format(item.id) %}
+
+<div class="contianer my-3">
+  <div class="row">
+    <div class="col-md-8 col-12 mx-auto">
+      <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Brief</th>
+                <th scope="col">Ref-Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Category</th>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.brief }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Parent</th>
+                {% if parent_item %}
+                <td>{{ parent_item.id }}</td>
+                <td>{{ parent_item.name }}</td>
+                <td>{{ parent_item.brief }}</td>
+                <td>{{ parent_item.count }}</td>
+                {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                {% endif %}
+            </tr>
+        </tbody>
+      </table>
+      <div class="btn-group" role="group" aria-label="Update, Delete, List">
+        <a class="btn btn-warning" href="{{ update_url }}">Update</a>
+        <a class="btn btn-danger" href="{{ delete_url }}">Delete</a>
+        <a class="btn btn-primary" href="{{ list_url }}">Back to List</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
