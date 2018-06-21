@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+
+{% block title %}Paper{% endblock %}
+
+
+{% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center vh-75">
+  <h1 class="mt-2 mb-5 text-primary">Pull Your Paper</h1>
+  <form class="form-inline needs-validation" method="post" enctype="multipart/form-data" novalidate>
+    
+    {{ form.csrf_token }}
+
+    <div class="input-group input-group-lg" style="width: 660px;">
+      
+      {% if form.link.errors %}
+      {% set css_class = "form-control is-invalid" %}
+      {% else %}
+      {% set css_class = "form-control" %}
+      {% endif %}
+
+      {{ form.link(class=css_class, placeholder="enter URL of arXiv, ScienceDirect, SpringerLink, IEEE Xplore", autocomplete="off", autofocus="") }}
+
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Pull</button>
+        <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div role="separator" class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+        </div> -->
+      </div>
+      
+
+      <div class="invalid-feedback">
+        {% for error in form.link.errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+    </div>
+  </form> 
+</div>
+{% endblock %}

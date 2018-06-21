@@ -197,7 +197,7 @@ def new_mod(dirname, mod_name):
             '#         return {}',
             '',
             '#     def __repr__(self):',
-            '#         return "<FooBar name=%r> % self.name"'
+            '#         return "<FooBar name=%r>" % self.name'
         ]
     }, {
         'name': 'forms.py',
