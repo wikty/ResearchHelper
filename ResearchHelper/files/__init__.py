@@ -1,7 +1,7 @@
 # Import from outsite of current package
 from ResearchHelper.db import db
 from ResearchHelper.db import TimestampModelMixin
-from ResearchHelper.db import CommaSeparatedStr
+from ResearchHelper.db import CommaSeparatedString
 from ResearchHelper.helper import login_required
 from ResearchHelper.utils import file_uniquename
 from ResearchHelper.utils import file_fingerprint

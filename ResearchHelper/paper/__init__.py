@@ -11,7 +11,9 @@ from ResearchHelper.forms import baseclass_form_factory
 from ResearchHelper.forms import ModelForm
 # create forms via WTForms-Alchemy factory
 from ResearchHelper.forms import metaclass_form_factory
+from ResearchHelper.forms import CommaListField
 from ResearchHelper.api import response_json
+from ResearchHelper.models import User
 
 from .controllers import bp
 from .config import get_spider_cache_folder

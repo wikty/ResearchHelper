@@ -76,7 +76,7 @@ class JSONType(sa.types.TypeDecorator):
         return json.loads(value)
 
 
-class CommaSeparatedStr(sa.types.TypeDecorator):
+class CommaSeparatedString(sa.types.TypeDecorator):
     impl = sa.types.String
 
     def process_bind_param(self, value, dialect):
@@ -97,3 +97,6 @@ class CommaSeparatedStr(sa.types.TypeDecorator):
 def init_app(app):
     """Register functions/commands into application instance."""
     db.init_app(app)
+    # add custome column types
+    db.JSONType = JSONType
+    db.CommaSeparatedString = CommaSeparatedString

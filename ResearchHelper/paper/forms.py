@@ -10,6 +10,7 @@ from wtforms.validators import DataRequired, InputRequired, Email,\
     AnyOf, NoneOf, UUID, URL, ValidationError, StopValidation
 
 from . import BaseForm
+from . import CommaListField
 from .spiders import SpiderFactory
 
 
@@ -37,3 +38,15 @@ class SearchForm(BaseForm):
                 flag = True
         if not flag:
             raise ValidationError('Site [%s] is not supported yet' % netloc)
+
+class MetadataForm(BaseForm):
+    title = StringField('Title', validators=[
+        DataRequired(message='title is required.')
+    ])
+    abstrace = TextAreaField('Abstract')
+    date = DateField('Date')
+    toc = TextAreaField('TOC')
+    highlights = TextAreaField('Highlights')
+    authors = CommaListField('Authors')
+    categories = CommaListField('Categories')
+    keywords = CommaListField('Keywords')

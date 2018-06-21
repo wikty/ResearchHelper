@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% from "helper/form.html" import render_field %}
+
+{% block title %}Paper Metadata Update{% endblock %}
+
+
+{% block content %}
+<div class="container my-2">
+  <h1>Paper Metadata Update</h1>
+  <form class="needs-validation" method="post" action="{{ action }}" novalidate>
+    
+    {{ form.csrf_token }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    {{ render_field(field) }}
+    {% endfor %}
+
+    <button class="btn btn-warning" type="submit" value="update">Update</button>
+  </form>
+</div>
+{% endblock %}

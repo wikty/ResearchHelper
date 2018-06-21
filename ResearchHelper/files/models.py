@@ -1,6 +1,6 @@
 from . import db
 from . import TimestampModelMixin
-from . import CommaSeparatedStr
+from . import CommaSeparatedString
 from . import User
 from .config import mod_name
 
@@ -39,8 +39,8 @@ class FileMetadata(db.Model, TimestampModelMixin):
     date = db.Column(db.Date)
     toc = db.Column(db.Text)
     thema = db.Column(db.String)
-    authors = db.Column(CommaSeparatedStr)
-    keywords = db.Column(CommaSeparatedStr)
+    authors = db.Column(CommaSeparatedString)
+    keywords = db.Column(CommaSeparatedString)
 
     file = db.relationship(File,
         lazy='joined',
