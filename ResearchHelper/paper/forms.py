@@ -43,10 +43,10 @@ class MetadataForm(BaseForm):
     title = StringField('Title', validators=[
         DataRequired(message='title is required.')
     ])
-    abstrace = TextAreaField('Abstract')
-    date = DateField('Date')
+    abstract = TextAreaField('Abstract', render_kw={'rows': 15})
+    published = DateTimeField('Published')
     toc = TextAreaField('TOC')
-    highlights = TextAreaField('Highlights')
+    highlights = TextAreaField('Highlights', render_kw={'rows': 15})
     authors = CommaListField('Authors')
     categories = CommaListField('Categories')
     keywords = CommaListField('Keywords')

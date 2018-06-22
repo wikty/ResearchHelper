@@ -2,6 +2,14 @@
 
 {% from "helper/form.html" import render_field %}
 
+{% block static %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tagsinput.css') }}">
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/tagsinput.js') }}"></script>
+{% endblock %}
+
 {% block title %}Paper Metadata Update{% endblock %}
 
 
@@ -13,7 +21,13 @@
     {{ form.csrf_token }}
 
     {% for field in form if field.widget.input_type != 'hidden' %}
+
+    {% if field.name is in ['authors', 'categories', 'keywords'] %}
+    {{ render_field(field, data_role="tagsinput") }}
+    {% else %}
     {{ render_field(field) }}
+    {%endif%}
+
     {% endfor %}
 
     <button class="btn btn-warning" type="submit" value="update">Update</button>

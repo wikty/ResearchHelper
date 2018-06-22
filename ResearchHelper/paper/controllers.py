@@ -6,17 +6,17 @@ from . import login_required
 from . import response_json
 from .config import mod_name, spider_cache_expire, get_spider_cache_folder
 from .forms import SearchForm, MetadataForm
-from .models import Paper, PaperMetadata
+from .models import Source, Metadata
 from .spiders import SpiderFactory
 
 
 bp = Blueprint(mod_name, __name__, url_prefix="/paper")
 
 
-def metadata_get_or_404(paper_id, user_id):
-    metadata = PaperMetadata.query.filter_by(
+def metadata_get_or_404(source_id, user_id):
+    metadata = Metadata.query.filter_by(
         user_id=user_id,
-        paper_id=paper_id
+        source_id=source_id
     ).first()
     if metadata is None:
         abort(404)
@@ -46,31 +46,33 @@ def index():
             return redirect(url_for('.index'))
 
         item = spider.get_item()
-        paper = Paper.update_or_create(**item)
-        PaperMetadata.get_or_create(paper, g.user)
+        source = Source.update_or_create(**item)
+        Metadata.get_or_create(source, g.user)
         flash("You just pull a paper, maybe it's time to update the metadata.")
-        return redirect(url_for('.metadata_update', paper_id=paper.id))
+        return redirect(url_for('.metadata_update', source_id=source.id))
 
     return render_template('paper/index.html', form=form)
 
 
-@bp.route('/metadata/<int:paper_id>')
-def metadata_detail(paper_id):
+@bp.route('/metadata/<int:source_id>')
+def metadata_detail(source_id):
+    metadata = metadata_get_or_404(user_id=g.user.id, source_id=source_id)
+    raise Exception(metadata.categories)
     if g.user is None:
         return 'you will see the share paper metadata.'
     else:
         return 'you will see your own metadata.'
 
 
-@bp.route('/metadata/<int:paper_id>/update', methods=('GET', 'POST'))
+@bp.route('/metadata/<int:source_id>/update', methods=('GET', 'POST'))
 @login_required
-def metadata_update(paper_id):
-    metadata = metadata_get_or_404(user_id=g.user.id, paper_id=paper_id)
+def metadata_update(source_id):
+    metadata = metadata_get_or_404(user_id=g.user.id, source_id=source_id)
     form = MetadataForm(obj=metadata)
     if form.validate_on_submit():
         form.populate_obj(metadata)
         db.session.commit()
-        return redirect(url_for('.metadata_detail', paper_id=paper_id))
+        return redirect(url_for('.metadata_detail', source_id=source_id))
 
     return render_template('paper/metadata/form.html', 
-        form=form, action=url_for('.metadata_update'))
+        form=form, action=url_for('.metadata_update', source_id=source_id))

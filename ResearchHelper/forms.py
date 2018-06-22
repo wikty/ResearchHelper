@@ -141,7 +141,7 @@ from wtforms.ext.sqlalchemy.orm import model_form as sa_model_form
 from wtforms_alchemy import model_form_factory
 
 from .db import db
-from .utils import split_delimiter_quoted_str
+from .utils import comma_separated_string_split
 
 
 BaseModelForm = model_form_factory(BaseForm)
@@ -233,14 +233,15 @@ class CommaListField(BaseField):
     def _value(self):
         # invoked by the TextInput widget to display the value of field
         if self.data:
-            return ','.join(self.data)
+            return ','.join([v.strip('"') for v in self.data])
+            # return ','.join(self.data)
         else:
             return ''
 
     def process_formdata(self, valuelist):
         # invoked when form data income
         if valuelist:
-            self.data = split_delimiter_quoted_str(valuelist[0])
+            self.data = comma_separated_string_split(valuelist[0])
         else:
             self.data = []
 

@@ -4,6 +4,8 @@ import uuid
 import hashlib
 import string
 import random
+import csv
+from io import StringIO
 
 def rlid_generator(n=6, chars=string.ascii_letters+string.digits):
     """Generate a random fixed length string."""
@@ -73,3 +75,20 @@ def split_delimiter_quoted_str(s, delimiter=',', quote='"'):
         r'(?:[^\s{d}{q}]|{q}(?:\\.|[^{q}])*{q})+'.format(d=delimiter, q=quote), 
         s
     )
+
+def comma_separated_string_join(value=[]):
+    """Convert a list/tuple/set to a comma-separated string."""
+    output = StringIO()
+    writer = csv.writer(output, 
+        delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    writer.writerow(value)
+    s = output.getvalue()
+    output.close()
+    return s
+
+def comma_separated_string_split(value=''):
+    """Convert a comma-separated string to a list."""
+    output = StringIO(value)
+    reader = csv.reader(output, 
+        delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    return next(reader)

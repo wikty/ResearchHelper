@@ -1,7 +1,4 @@
-import re
-import csv
 import json
-from io import StringIO
 
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr, \
@@ -16,7 +13,10 @@ from flask_sqlalchemy.model import Model, DefaultMeta, NameMetaMixin, \
     BindMetaMixin, DeclarativeMeta, should_set_tablename
 
 
-from .utils import camel_to_snake_case
+from .utils import (
+    camel_to_snake_case, comma_separated_string_join, 
+    comma_separated_string_split
+)
 
 
 # Override table automatically generate class
@@ -64,34 +64,41 @@ class TimestampModelMixin(object):
         onupdate=db.func.current_timestamp())
 
 
+class JSONTypeException(Exception):
+    pass
+
+
 class JSONType(sa.types.TypeDecorator):
     impl = sa.types.String
 
     ensure_ascii = False
 
     def process_bind_param(self, value, dialect):
-        return json.dumps(value, ensure_ascii=self.ensure_ascii)
+        if value is not None:
+            return json.dumps(value, ensure_ascii=self.ensure_ascii)
 
     def process_result_value(self, value, dialect):
-        return json.loads(value)
+        if isinstance(value, str):
+            return json.loads(value)
+
+
+class CommaSeparatedStringException(Exception):
+    pass
 
 
 class CommaSeparatedString(sa.types.TypeDecorator):
     impl = sa.types.String
 
     def process_bind_param(self, value, dialect):
-        if isinstance(value, (list, tuple, set)):
-            output = StringIO()
-            writer = csv.writer(output, 
-                delimiter=',', quotechar='"')
-            writer.writerow(value)
-            s = output.getvalue()
-            output.close()
-            return s
-        return super().process_bind_param(value, dialect)
+        if value is None:
+            return None
+        if not isinstance(value, (list, tuple, set)):
+            raise CommaSeparatedStringException('Only list/tuple/set is allowed.')
+        return comma_separated_string_join(value)
 
     def process_result_value(self, value, dialect):
-        return re.findall(r'(?:[^\s,"]|"(?:\\.|[^"])*")+', value)
+        if isinstance(value, str):
+            return comma_separated_string_split(value)
 
 
 def init_app(app):

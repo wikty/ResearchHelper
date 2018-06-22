@@ -18,6 +18,17 @@
         </li>
         {% endif %}
 
+        {# Paper #}
+        {% if url_for('paper.index') == request.path %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('paper.index') }}">Paper <span class="sr-only">(current)</span></a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('paper.index') }}">Paper</a>
+        </li>
+        {% endif %}
+
         {# Taxonomy #}
         {% if url_for('taxonomy.index') == request.path %}
         <li class="nav-item dropdown active">

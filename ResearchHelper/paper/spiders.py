@@ -3,6 +3,7 @@ import time
 import hashlib
 import socket
 import json
+import datetime
 from io import BytesIO
 from dateutil import parser as date_parser
 from urllib.request import urlopen
@@ -52,12 +53,12 @@ class PaperItem(object):
         self.download_link = ''
         self.doi_link = ''
         self._title = ''
-        self._date = ''
         self._abstract = ''
         self._highlights = []
         self._authors = []
         self._keywords = []
         self._categories = []
+        self._published = datetime.datetime(1970, 1, 1) # epoch
 
     def filter_remove_blank(self, value):
         if isinstance(value, str):
@@ -94,21 +95,22 @@ class PaperItem(object):
         del self._authors
 
     @property
-    def date(self):
-        return self._date
+    def published(self):
+        return self._published
     
-    @date.setter
-    def date(self, value):
+    @published.setter
+    def published(self, value):
         try:
             dt = date_parser.parse(str(value))
         except Exception as e:
-            self._date = str(value)
+            pass
+            # self._date = str(value)
         else:
-            self._date = dt.strftime("%Y-%m-%d %H:%M:%S")
+            self._published = dt
 
-    @date.deleter
-    def date(self):
-        del self._date
+    @published.deleter
+    def published(self):
+        del self._published
 
     @property
     def categories(self):
@@ -167,7 +169,7 @@ class PaperItem(object):
             'url': self.url,
             'title': self.title,
             'authors': self.authors,
-            'date': self.date,
+            'published': self.published,
             'keywords': self.keywords,
             'categories': self.categories,
             'abstract': self.abstract,
@@ -405,7 +407,7 @@ class ScienceDirectSpider(BaseSpider):
         xpath = '//script[@type="application/json"]/text()'
         obj = json.loads(''.join(tree.xpath(xpath)))
         date = obj.get('article', {}).get('dates', {}).get('Publication date', '')
-        self.update_item('date', date)
+        self.update_item('published', date)
         download_link = obj.get('article', {}).get('pdfDownload', {}).get('linkToPdf', '')
         download_link = self.urljoin(download_link) if download_link else ''
         self.update_item('download_link', download_link)
@@ -427,7 +429,7 @@ class ArxivSpider(BaseSpider):
         xpath ='//*[@id="abs"]//div[contains(@class, "submission-history")]/b[last()]'
         date = tree.xpath(xpath)
         date = date[0].tail.split('(')[0] if date else ''
-        self.update_item('date', date)
+        self.update_item('published', date)
         xpath = '//*[@id="abs"]//blockquote[contains(@class, "abstract")]/text()'
         self.update_item('abstract', tree.xpath(xpath))
         xpath = '//*[@id="abs"]//div[contains(@class, "subheader")]/h1/text()'

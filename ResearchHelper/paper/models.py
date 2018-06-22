@@ -4,7 +4,11 @@ from . import db, TimestampModelMixin, User
 from .config import mod_name
 
 
-class Paper(db.Model, TimestampModelMixin):
+def md5_hash(data):
+    return hashlib.md5(str(data).encode('utf-8')).hexdigest()
+
+
+class Source(db.Model, TimestampModelMixin):
     __tableprefix__ = mod_name
 
     id = db.Column(db.Integer, primary_key=True)
@@ -12,12 +16,12 @@ class Paper(db.Model, TimestampModelMixin):
     urlhash = db.Column(db.String, nullable=False, index=True)
     title = db.Column(db.String, nullable=False)
     abstract = db.Column(db.Text, nullable=False)
-    date = db.Column(db.String)
+    published = db.Column(db.DateTime)
     toc = db.Column(db.Text)
+    highlights = db.Column(db.Text)
     authors = db.Column(db.CommaSeparatedString)
     categories = db.Column(db.CommaSeparatedString)
     keywords = db.Column(db.CommaSeparatedString)
-    highlights = db.Column(db.Text)
     doi_link = db.Column(db.String)
     download_link = db.Column(db.String)
     download_hash = db.Column(db.String)
@@ -36,70 +40,70 @@ class Paper(db.Model, TimestampModelMixin):
 
     @classmethod
     def update_or_create(cls, url, **kwargs):
-        urlhash = hashlib.md5(str(url).encode('utf-8')).hexdigest()
-        paper = cls.query.filter_by(urlhash=urlhash).first()
+        urlhash = md5_hash(url)
+        source = cls.query.filter_by(urlhash=urlhash).first()
         created = False
-        if paper is None:
-            paper = cls(url=url, pull_count=0)
+        if source is None:
+            source = cls(url=url, pull_count=0)
             created = True
         for key, value in kwargs.items():
             if value:
-                setattr(paper, key, value)
-        paper.urlhash = urlhash
-        paper.pull_count = paper.pull_count + 1
+                setattr(source, key, value)
+        source.urlhash = urlhash
+        source.pull_count = source.pull_count + 1
         if created:
-            db.session.add(paper)
+            db.session.add(source)
         db.session.commit()
-        return paper
+        return source
 
     def __repr__(self):
-        return "<Paper title=%r>" % self.title
+        return "<Source title=%r>" % self.title
 
     def is_downloaded(self):
         return self.download_pull > 0
 
 
-class PaperMetadata(db.Model, TimestampModelMixin):
+class Metadata(db.Model, TimestampModelMixin):
     __tableprefix__ = mod_name
 
-    paper_id = db.Column(db.Integer,
-        db.ForeignKey(Paper.id), primary_key=True)
+    source_id = db.Column(db.Integer,
+        db.ForeignKey(Source.id), primary_key=True)
     user_id = db.Column(db.Integer, 
         db.ForeignKey(User.id), primary_key=True)
     title = db.Column(db.String, nullable=False)
     abstract = db.Column(db.Text, nullable=False)
-    date = db.Column(db.String)
+    published = db.Column(db.DateTime)
     toc = db.Column(db.Text)
     highlights = db.Column(db.Text)
     authors = db.Column(db.CommaSeparatedString)
     categories = db.Column(db.CommaSeparatedString)
     keywords = db.Column(db.CommaSeparatedString)
     
-    paper = db.relationship(Paper,
+    source = db.relationship(Source,
         lazy='joined',
         backref=db.backref('users', lazy=True))
     user = db.relationship(User, 
         lazy='joined',
-        backref=db.backref('papers', lazy=True))
+        backref=db.backref('sources', lazy=True))
 
     @classmethod
-    def get_or_create(cls, paper, user):
+    def get_or_create(cls, source, user):
         metadata = cls.query.filter_by(
             user_id=user.id,
-            paper_id=paper.id
+            source_id=source.id
         ).first()
         if metadata is None:
             metadata = cls(
                 user_id=user.id,
-                paper_id=paper.id,
-                title=paper.title,
-                abstract=paper.abstract,
-                date=paper.date,
-                toc=paper.toc,
-                authors=paper.authors,
-                categories=paper.categories,
-                keywords=paper.keywords,
-                highlights=paper.highlights
+                source_id=source.id,
+                title=source.title,
+                abstract=source.abstract,
+                published=source.published,
+                toc=source.toc,
+                authors=source.authors,
+                categories=source.categories,
+                keywords=source.keywords,
+                highlights=source.highlights
             )
             db.session.add(metadata)
             db.session.commit()
